@@ -126,5 +126,40 @@ https://hub.docker.com/
 다른 사람이 만든 이미지를 검색하고 사용할 수 있습니다.
 내가 필요한 도커 이미지를 다운로드 받을 수 있고, 내가 업로드할 수도 있음.
 참고 : 도커 레지스트 ==> 사설.
+
+<도커 이미지 만들기 ~깃배시에서 하면 됨~>
+- HTML 파일을 원격지의 브라우저에게 전송하려면 웹서버가 필요
+  - 웹서버 중 유명한 것이 nginx
+  - nignx Docker Image는 이미 도커 허브에 있다.
+- 목표: Docker Image 만들기
+  - Docker Image는 DockerFile로부터 생성
+- DockerFile 작성
+  - 도커허브의 nginx:lastest를 기반으로 한다
+- index.html 파일 생성 -> 소스코드
+- 도커 이미지 생성
+  - docker build -t {이미지이름} .
+  - 도커 이미지 이름 : 리포지터리_이름:태그
+    - 기본 태그 : latest
+    - 참고 : latest는 생략 가능(태그를 latest로 쓰고 싶다면)
+    - docker build -t nginx-1 . == docker build -t nginx-1:latest .
+      - .은 현재 폴더를 나타냄, 특정 경로에 만들고 싶다면 경로를 써주면 됨)
+      - 도커 파일 하나 당 이미지는 여러개 만들 수 있다!
+- 생성된 도커 이미지 확인 명령어
+  - docker images
+- 생성된 도커 이미지 삭제 명령어
+  - docker rmi {이미지이름(==리포지터리_이름:태그)(ex: nginx-1:latest)} or {IMAGE ID} .
+  - 이름으로 입력할 때 태그가 latest라면 생략 가능
+  - 이때, '현재 폴더'라는 의미의 .은 생략 가능 (만들 때는 경로를 따로 입력하지 않는 이상 생략하면 안됨!!!)
+
+<도커 컨테이너 실행하기>
+- $ docker run -d -p 80:80 --name nginx-1-1 nginx-1 (도커 이미지의 이름이 nginx-1라고 가정한다)
+- 성공하면 localhost:80으로 접속 -> index.html에 적어둔 <Hello>가 출력되는 것을 확인할 수 있다
+- 파일로 이미지를 여러개 만들 수 있듯, 이미지로 컨테이너를 여러개 만들 수도 있다
+- $ docker run -d -p 8081:80 --name nginx-1-2 nginx-1 (도커 이미지의 이름이 nginx-1라고 가정한다)
+==> localhost:8081로 접속하면 똑같이 Hello가 나온다!
+
+<토막상식>
+port랑 port forwarding ==> 포트를 할당해서 접근하는 것 : 나중에 찾아보기~
+
 */
 
