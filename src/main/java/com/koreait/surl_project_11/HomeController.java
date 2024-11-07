@@ -16,7 +16,7 @@ public class HomeController {
     @GetMapping("/")
     @ResponseBody
     public String showMain() {
-        return "MODIFY Main on " + customSiteName;
+        return "auto test Main on " + customSiteName;
     }
 
     @GetMapping("/secretKey")
