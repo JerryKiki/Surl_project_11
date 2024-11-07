@@ -1,3 +1,4 @@
+# .yml cannot read UTF-8, so I wrote some explanations in English.
 server:
   port: 8070
 spring:
@@ -9,6 +10,25 @@ spring:
     username: root
     password: koreait123414
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      # This setting makes JPA to make all entity classes when every execution of the springboot server.
+      ddl-auto: update
+    # This setting makes console to show sql logs which JPA sent.
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        format_sql: true
+        highlight_sql: ture
+        use_sql_comments: true
 custom:
   site:
     name: "My Site"
+# This setting makes console to show sql logs which JPA sent.
+logging:
+  level:
+    com.koreait.surl_project_11: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    org.hibernate.orm.jdbc.extract: TRACE
+    org.springframework.transaction.interceptor: TRACE
