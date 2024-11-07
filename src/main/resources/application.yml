@@ -1,9 +1,14 @@
 server:
-  port: 8090
+  port: 8070
 spring:
   profiles:
     active: dev
     include: secret
+  datasource:
+    url: jdbc:mysql://localhost:3307/surl_dev
+    username: root
+    password: koreait123414
+    driver-class-name: com.mysql.cj.jdbc.Driver
 custom:
   site:
     name: "My Site"
