@@ -1,5 +1,6 @@
-package com.koreait.surl_project_11;
+package com.koreait.surl_project_11.domain.surl.surl.controller;
 
+import com.koreait.surl_project_11.domain.surl.surl.entity.Surl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
