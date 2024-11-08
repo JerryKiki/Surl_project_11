@@ -6,3 +6,7 @@ use surl_dev;
 
 show tables;
 desc article;
+
+select * from article;
+
+TRUNCATE TABLE article
