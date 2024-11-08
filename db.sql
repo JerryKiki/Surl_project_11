@@ -8,5 +8,7 @@ show tables;
 desc article;
 
 select * from article;
+select * from member;
 
-TRUNCATE TABLE article
+TRUNCATE TABLE article;
+TRUNCATE TABLE `member`;

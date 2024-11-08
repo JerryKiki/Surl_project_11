@@ -2,6 +2,9 @@ package com.koreait.surl_project_11.global.initData;
 
 import com.koreait.surl_project_11.domain.article.article.entity.Article;
 import com.koreait.surl_project_11.domain.article.article.service.ArticleService;
+import com.koreait.surl_project_11.domain.member.member.entity.Member;
+import com.koreait.surl_project_11.domain.member.member.service.MemberService;
+import com.koreait.surl_project_11.global.rsData.RsData;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ public class NotProd {
     private NotProd self;
 
     private final ArticleService articleService;
+    private final MemberService memberService;
 
     @Bean //빈을 스프링부트에 등록 : 개발자가 new 하지 않아도 스프링부트가 직접 관리하는 객체 (실행될 때 자동으로 생성해서 관리 시작)
     public ApplicationRunner initNotProd() {
@@ -65,14 +69,16 @@ public class NotProd {
 //        System.out.println("DB에 넣기 전 id 1 : " + article1.getId());
 //        System.out.println("DB에 넣기 전 id 2 : " + article2.getId());
 
-        Article article1 = articleService.write("제목 1", "내용 1");
-        Article article2 = articleService.write("제목 2", "내용 2");
+        Article article1 = articleService.write("제목 1", "내용 1").getData();
+        Article article2 = articleService.write("제목 2", "내용 2").getData();
 
         //DB에 save를 한 후에 id가 생성된다.
 //        System.out.println("DB에 넣은 후 id 1 : " + article1.getId());
 //        System.out.println("DB에 넣은 후 id 2 : " + article2.getId());
 
-        //이렇게 바꿨을 때, '더티(==DB의 내용과 객체의 내용이 달라지는 상황)하지 않게 하기 위해' 알아서 다시 db에 업데이트한다.
+        //**트랜젝션일 때는**, 아래처럼 객체만 변경되어도 변경된 데이터로 DB에 최종 삽입된다. 이유는 ==>
+        //**트랜젝션 커밋을 보내기 전에**, 영속성 컨텍스트 상태(DB에 넣을 데이터라고 이해)와 현재의 객체 상태를 비교 확인하여서,
+        //'더티(==DB의 내용과 객체의 내용이 달라지는 상황)하지 않게 하기 위해' 알아서 다시 업데이트해 DB에 넣기 때문.
         article2.setTitle("제목 2-2");
 
         articleService.delete(article1);
@@ -80,25 +86,36 @@ public class NotProd {
 
     @Transactional
     public void work2() {
+        if (memberService.count() > 0) return; //0개보다 많이 있으면 아래는 실행 안함
 
-        //Optional은 List와 유사. 차이 : List에 넣을 수 있는 개수는 0 ~ N / Optional에 넣을 수 있는 개수는 0 ~ 1 (여러개 가능/한개가 최대)
+        Member member1 = memberService.join("user1", "1234", "유저 1").getData();
+        Member member2 = memberService.join("user2", "1234", "유저 2").getData();
+        RsData<Member> joinRs = memberService.join("user2", "1234", "유저 2");
+        System.out.println("joinRs.getMsg() : " + joinRs.getMsg());
+        System.out.println("joinRs.getStatusCode() : " + joinRs.getStatusCode());
+    }
+}
 
-        //조건 있는 select
-        //0개 혹은 1개므로 Optional에 담아도 됨 (JAP에서 제공해주는 이 함수 findBy조건()이 애초에 Optional을 리턴하게 되어있다.)
+
+//아래는 필기
+
+//레이어드 아키텍쳐
+//컨트롤러 -> 서비스 -> 리포지터리  -> (JDBC) -> DB
+
+
+//Optional은 List와 유사. 차이 : List에 넣을 수 있는 개수는 0 ~ N / Optional에 넣을 수 있는 개수는 0 ~ 1 (여러개 가능/한개가 최대)
+
+//조건 있는 select
+//0개 혹은 1개므로 Optional에 담아도 됨 (JAP에서 제공해주는 이 함수 findBy조건()이 애초에 Optional을 리턴하게 되어있다.)
 //        Optional<Article> opArticle = articleService.findById(2L);
 
-        //Article article = opArticle.get();
+//Article article = opArticle.get();
 
-        //조건 없이 select
-        //N개일 수 있으므로 List에 담아야함 (JAP에서 제공해주는 이 함수 findAll()이 애초에 List를 리턴하게 되어있다.)
-        //상속 경로에 따라 findAll()의 리턴타입은 바뀔 수도 있음에 주의
+//조건 없이 select
+//N개일 수 있으므로 List에 담아야함 (JAP에서 제공해주는 이 함수 findAll()이 애초에 List를 리턴하게 되어있다.)
+//상속 경로에 따라 findAll()의 리턴타입은 바뀔 수도 있음에 주의
 //        List<Article> articles = articleService.findAll();
 //
 //        List<Article> articlesInId = articleService.findByIdInOrderByTitleDescIdAsc(List.of(1L, 2L, 3L));
 //        List<Article> articlesByTitle = articleService.findByTitleContaining("제목");
 //        List<Article> articlesByTitleAndBody = articleService.findByTitleAndBody("제목", "내용");
-    }
-}
-
-//레이어드 아키텍쳐
-//컨트롤러 -> 서비스 -> 리포지터리  -> (JDBC) -> DB
