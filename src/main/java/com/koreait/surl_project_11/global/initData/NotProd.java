@@ -96,6 +96,9 @@ public class NotProd {
         //상속 경로에 따라 findAll()의 리턴타입은 바뀔 수도 있음에 주의
         List<Article> articles = articleRepository.findAll();
 
+        List<Article> articlesInId = articleRepository.findByIdInOrderByTitleDescIdAsc(List.of(1L, 2L, 3L));
+        List<Article> articlesByTitle = articleRepository.findByTitleContaining("제목");
+        List<Article> articlesByTitleAndBody = articleRepository.findByTitleAndBody("제목", "내용");
     }
 
 }
