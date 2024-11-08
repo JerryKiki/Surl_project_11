@@ -4,7 +4,6 @@ import com.koreait.surl_project_11.domain.article.article.entity.Article;
 import com.koreait.surl_project_11.domain.article.article.service.ArticleService;
 import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.domain.member.member.service.MemberService;
-import com.koreait.surl_project_11.global.rsData.RsData;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,31 +39,46 @@ public class NotProd {
         };
     }
 
+    //서비스의 모든 public 메서드에서는 @Transactional을 붙이는 게 관례
+    //그 중에서 SELECT만 하는 메서드는 @Transactional(readOnly = true)를 붙여야 함
+    //클래스 수준에서 @Transactional을 붙인다 ==> 알아서 하위 method에 @Transactional을 붙인다
+    //@Transactional이 붙은 메서드 내에서 @Transactional이 붙은 메서드를 실행하면, 물리 트랜젝션은 가장 바깥쪽의 메세드 기준으로 1개만 작동함
+    //하위에서 에러가 발생했어도 맨 상위의 메서드에서 롤백이 발생한다는 의미
+    //다만 논리 트랜잭션은 @Transactional이 붙은 메서드가 호출 될 때마다 작동함
+    //하지만 중요한 것은 물리 트랜잭션
+    //논리 트랜젝션 안에서 RuntimeException 계열의 예외가 발생하면 조용한 롤백(==slient rollback)이 일어남
+    //==> try-catch로 예외가 발생하는 메서드를 감싸도 소용없음
+    //@Transactional(noRollbackFor = {엑셉션 클래스명}.class == 특정 예외에 대해서 조용한 롤백이 발생하지 않도록 할 수 있다
+
+    //@Transactional(noRollbackFor = GlobalException.class) //이렇게 하면 GlobalException이 발생했을 땐 롤백 안한다
     @Transactional //트랜젝션(모든 과정이 성공해야 커밋되도록 안쪽의 과정을 하나의 단위로 묶음)으로 만듦
     public void work1() {
         System.out.println("Not Prod.initNotProd 실행");
-
-        //rows를 세어줌 == select count(*) from article;
-        if (articleService.count() > 0) return; //0개보다 많이 있으면 아래는 실행 안함
-
-        //방법 2 : deleteAll하고 실행
-        //articleRepository.deleteAll();
 
         //참고 : 테이블 초기화 ==> truncate 명령어
         //delete는 다 지우고 다시 실행하면 auto_increment가 기존 데이터 + 1에서 시작하지만
         //truncate은 초기화하는 것이기 때문에 다시 1부터 시작한다.
 
-        //아래는 서비스로 옮겨감
-//        Article article1 = Article.builder()
-//                .title("제목1")
-//                .body("내용1")
-//                .build();
-//
-//        Article article2 = Article.builder()
-//                .title("제목2")
-//                .body("내용2")
-//                .build();
+        //rows를 세어줌 == select count(*) from article;
+        if (articleService.count() > 0) return; //방법 1: 0개보다 많이 있으면 아래는 실행 안함
 
+        //방법 2 : deleteAll하고 실행
+        //articleRepository.deleteAll();
+
+        Member member1 = memberService.join("user1", "1234", "유저 1").getData();
+        Member member2 = memberService.join("user2", "1234", "유저 2").getData();
+
+        //중복 가입 에러 발생 시켜 보기
+        //try-catch로 감쌌기 때문에 그냥 넘어갈 것 같지만, join도 transaction이고 work1도 transaction이기 때문에
+        //어쨌든 부분 실패 == 완전 실패로서 rollback 하게 된다
+//        try {
+//            RsData<Member> joinRs = memberService.join("user2", "1234", "유저 2");
+//        } catch (GlobalException e) {
+//            System.out.println("e.getMsg() : " + e.getRsData().getMsg());
+//            System.out.println("e.getStatusCode() : " + e.getRsData().getStatusCode());
+//        }
+
+        //sevice 도입 전 여기서 빌드 했었던 흔적...
         //빌드할 때 id를 정해주지 않았으므로 0, 0으로 나옴 : DB에 넣기 전에 ID가 정해진다? NO! 애초에 그래서는 안됨
 //        System.out.println("DB에 넣기 전 id 1 : " + article1.getId());
 //        System.out.println("DB에 넣기 전 id 2 : " + article2.getId());
@@ -86,13 +100,7 @@ public class NotProd {
 
     @Transactional
     public void work2() {
-        if (memberService.count() > 0) return; //0개보다 많이 있으면 아래는 실행 안함
 
-        Member member1 = memberService.join("user1", "1234", "유저 1").getData();
-        Member member2 = memberService.join("user2", "1234", "유저 2").getData();
-        RsData<Member> joinRs = memberService.join("user2", "1234", "유저 2");
-        System.out.println("joinRs.getMsg() : " + joinRs.getMsg());
-        System.out.println("joinRs.getStatusCode() : " + joinRs.getStatusCode());
     }
 }
 
