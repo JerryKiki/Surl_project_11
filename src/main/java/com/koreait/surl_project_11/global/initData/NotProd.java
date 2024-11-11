@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 
 @Profile("!prod") //not production == dev or test 환경에 실행하겠다. (이 클래스의 경우는 테스트 데이터 생성용)
 @Configuration
@@ -31,6 +32,7 @@ public class NotProd {
     private final MemberService memberService;
 
     @Bean //빈을 스프링부트에 등록 : 개발자가 new 하지 않아도 스프링부트가 직접 관리하는 객체 (실행될 때 자동으로 생성해서 관리 시작)
+    @Order(4)
     public ApplicationRunner initNotProd() {
         return args -> {
             //트랜젝션을 두개 만들어보자

@@ -11,6 +11,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.annotation.Order;
 
 @Configuration
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class All { //언제나 생성됨
     private final MemberService memberService;
 
     @Bean
+    @Order(3) //서버 시작 시 실행 순서 : 다른 모든것들이 실행된 다음 실행되어야하므로 3번으로 시작됨 (멤버부터 제작)
     public ApplicationRunner initAll() {
         return args -> {
             self.work1();

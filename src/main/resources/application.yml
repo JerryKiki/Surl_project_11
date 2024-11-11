@@ -28,7 +28,6 @@ spring:
     # This setting makes console to show sql logs which JPA sent.
     properties:
       hibernate:
-        default_batch_fetch_size: 100
         format_sql: true
         highlight_sql: ture
         use_sql_comments: true
@@ -40,3 +39,6 @@ logging:
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.orm.jdbc.extract: TRACE
     org.springframework.transaction.interceptor: TRACE
+custom:
+  site:
+    name: "My Site"
