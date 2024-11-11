@@ -2,6 +2,7 @@ package com.koreait.surl_project_11.domain.article.article.service;
 
 import com.koreait.surl_project_11.domain.article.article.entity.Article;
 import com.koreait.surl_project_11.domain.article.article.repository.ArticleRepository;
+import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.global.rsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,9 +31,10 @@ public class ArticleService {
     // - 결과 코드
     // - 비정상적인 접근(도배) 등 감지되었을 시 실패로 만들기
     @Transactional //readOnly = true면 안되는 경우에는 명시해줌
-    public RsData<Article> write(String title, String body) {
+    public RsData<Article> write(Member member, String title, String body) {
         Article article = Article
                 .builder()
+                .author(member)
                 .title(title)
                 .body(body)
                 .build();

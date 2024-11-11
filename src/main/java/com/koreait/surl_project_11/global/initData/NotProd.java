@@ -83,8 +83,11 @@ public class NotProd {
 //        System.out.println("DB에 넣기 전 id 1 : " + article1.getId());
 //        System.out.println("DB에 넣기 전 id 2 : " + article2.getId());
 
-        Article article1 = articleService.write("제목 1", "내용 1").getData();
-        Article article2 = articleService.write("제목 2", "내용 2").getData();
+        Article article1 = articleService.write(member1, "제목 1", "내용 1").getData();
+        Article article2 = articleService.write(member1, "제목 2", "내용 2").getData();
+
+        Article article3 = articleService.write(member2, "제목 3", "내용 3").getData();
+        Article article4 = articleService.write(member2, "제목 4", "내용 4").getData();
 
         //DB에 save를 한 후에 id가 생성된다.
 //        System.out.println("DB에 넣은 후 id 1 : " + article1.getId());
