@@ -1,3 +1,4 @@
+# setting on github push
 name: Fly Deploy
 on:
   push:

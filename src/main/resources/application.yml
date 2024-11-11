@@ -6,13 +6,24 @@ spring:
     active: dev
     include: secret
   datasource:
-    url: jdbc:mysql://localhost:3307/surl_dev
-    username: root
-    password: koreait123414
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    ### postgre ###
+#    url: jdbc:postgresql://localhost:5432/surl_dev
+#    username: postgres
+#    password: koreait123414
+#    driver-class-name: org.postgresql.Driver
+    # When you change DB, you don't have to modify source code... JPA will automatically make query which match to your DB.
+    # You just need to change build.gradle file and 'datasource' section of setting files (application.yml things).
+    ### h2 ###
+    # when we use the h2 db, we can connect to this db with url "localhost:{your_spring_port_num}/h2-console"
+    # and then put url here in 'url' section on page, we can use query editor on our browser.
+    # warning : in this case, it works only when spring boot server is running.
+    url: jdbc:h2:./db_dev;MODE=MySQL #H2 can pretend like other DB(this case, MySQL)
+    username: sa
+    password:
+    driver-calss-name: org.h2.Driver
   jpa:
     hibernate:
-      # This setting makes JPA to make all entity classes when every execution of the springboot server.
+      # This setting makes JPA to make all entity classes in every execution of the springboot server.
       ddl-auto: update
     # This setting makes console to show sql logs which JPA sent.
     properties:
@@ -21,9 +32,6 @@ spring:
         format_sql: true
         highlight_sql: ture
         use_sql_comments: true
-custom:
-  site:
-    name: "My Site"
 # This setting makes console to show sql logs which JPA sent.
 logging:
   level:

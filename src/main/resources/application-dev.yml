@@ -2,6 +2,3 @@ spring:
   output:
     ansi:
       enabled: always
-custom:
-  site:
-    name: "My Site dev"

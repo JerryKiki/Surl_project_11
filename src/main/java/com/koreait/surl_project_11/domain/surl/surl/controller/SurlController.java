@@ -8,6 +8,7 @@ import com.koreait.surl_project_11.global.rq.Rq;
 import com.koreait.surl_project_11.global.rsData.RsData;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class SurlController {
 
     private final Rq rq;
@@ -32,9 +34,10 @@ public class SurlController {
         //이때 채운다. (안을 까보려고 했기 때문) ==> 이때 sql을 슬쩍 실행해서 진짜를 채운다
         // ==> 필요에 의해서 효율적으로 sql을 실행할 수 있다!
         //빈 깡통이라 발생하는 문제도 있으므로 완전히 이해하기 전까지는 주의해서 사용하자
-        System.out.println("before get id");
+        //프로덕션 모드에서, sout보다 log.debug를 사용하는 것을 훨씬 추천
+        log.debug("before get id");
         member.getId();
-        System.out.println("after get id");
+        log.debug("after get id");
 
         System.out.println("before get username");
         member.getUsername();

@@ -35,7 +35,6 @@ public class NotProd {
         return args -> {
             //트랜젝션을 두개 만들어보자
             self.work1();
-            self.work2();
         };
     }
 
@@ -65,8 +64,12 @@ public class NotProd {
         //방법 2 : deleteAll하고 실행
         //articleRepository.deleteAll();
 
-        Member member1 = memberService.join("user1", "1234", "유저 1").getData();
-        Member member2 = memberService.join("user2", "1234", "유저 2").getData();
+        //All이 언제나 실행되게 되었으므로 주석처리
+//        Member member1 = memberService.join("user1", "1234", "유저 1").getData();
+//        Member member2 = memberService.join("user2", "1234", "유저 2").getData();
+        //대신 쓰긴 써야하므로, all에서 만들어진 거 가져오기
+        Member memberUser1 = memberService.findByUserName("user1").get();
+        Member memberUser2 = memberService.findByUserName("user2").get();
 
         //중복 가입 에러 발생 시켜 보기
         //try-catch로 감쌌기 때문에 그냥 넘어갈 것 같지만, join도 transaction이고 work1도 transaction이기 때문에
@@ -83,11 +86,11 @@ public class NotProd {
 //        System.out.println("DB에 넣기 전 id 1 : " + article1.getId());
 //        System.out.println("DB에 넣기 전 id 2 : " + article2.getId());
 
-        Article article1 = articleService.write(member1, "제목 1", "내용 1").getData();
-        Article article2 = articleService.write(member1, "제목 2", "내용 2").getData();
+        Article article1 = articleService.write(memberUser1, "제목 1", "내용 1").getData();
+        Article article2 = articleService.write(memberUser1, "제목 2", "내용 2").getData();
 
-        Article article3 = articleService.write(member2, "제목 3", "내용 3").getData();
-        Article article4 = articleService.write(member2, "제목 4", "내용 4").getData();
+        Article article3 = articleService.write(memberUser2, "제목 3", "내용 3").getData();
+        Article article4 = articleService.write(memberUser2, "제목 4", "내용 4").getData();
 
         //DB에 save를 한 후에 id가 생성된다.
 //        System.out.println("DB에 넣은 후 id 1 : " + article1.getId());
@@ -96,14 +99,9 @@ public class NotProd {
         //**트랜젝션일 때는**, 아래처럼 객체만 변경되어도 변경된 데이터로 DB에 최종 삽입된다. 이유는 ==>
         //**트랜젝션 커밋을 보내기 전에**, 영속성 컨텍스트 상태(DB에 넣을 데이터라고 이해)와 현재의 객체 상태를 비교 확인하여서,
         //'더티(==DB의 내용과 객체의 내용이 달라지는 상황)하지 않게 하기 위해' 알아서 다시 업데이트해 DB에 넣기 때문.
-        article2.setTitle("제목 2-2");
+//        article2.setTitle("제목 2-2");
 
-        articleService.delete(article1);
-    }
-
-    @Transactional
-    public void work2() {
-
+//        articleService.delete(article1);
     }
 }
 

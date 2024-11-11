@@ -53,8 +53,8 @@ public class MemberService {
         return memberRepository.count();
     }
 
-    //@Transactional : private는 붙여도 소용 X
-    private Optional<Member> findByUserName(String username) {
+    @Transactional // private에는 붙여도 소용 X
+    public Optional<Member> findByUserName(String username) {
         return memberRepository.findByUsername(username);
     }
 

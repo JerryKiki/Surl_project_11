@@ -1,5 +1,26 @@
 server:
   port: 8080
-custom:
-  site:
-    name: "My Site Prod"
+spring:
+  datasource:
+  ### postgre ###
+    url: jdbc:postgresql://lyj-surl-app-db.internal:5432/surl_prod
+    username: postgres
+    password: LlU1NAark7i8sTG
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        # in production mode, make log as false is general setting.
+        format_sql: false
+        highlight_sql: false
+        use_sql_comments: false
+logging:
+  level:
+    # in production mode, make log level as info is general setting.
+    com.koreait.surl_project_11: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.orm.jdbc.bind: INFO
+    org.hibernate.orm.jdbc.extract: INFO
+    org.springframework.transaction.interceptor: INFO
