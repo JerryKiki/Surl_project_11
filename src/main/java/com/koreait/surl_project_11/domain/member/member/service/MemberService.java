@@ -57,4 +57,11 @@ public class MemberService {
     private Optional<Member> findByUserName(String username) {
         return memberRepository.findByUsername(username);
     }
+
+    public Member getReferenceById(long id) {
+        return memberRepository.getReferenceById(id); //findById랑 크게 다를 것 없으나, 'proxy 객체'를 리턴한다.
+        //프록시? : '효율적' ==> 동적으로 자신의 안을 채우는 객체 : 비워두었다가, 자신을 '깔려고'하면(==필요에 의해서만) 안쪽을 채운다. + 비용이 싸다.
+        //jpa식으로 '비용이 싸다' == 이 객체를 만드는데 sql이 바로 작동하지 않는다. (필요에 의해서만 잠깐 프로그램을 멈춰두고 갔다온다.)
+        //슈뢰딩거의 상자처럼 결국 사용자는 무슨 일이 벌어지는지 모르게 된다.
+    }
 }
