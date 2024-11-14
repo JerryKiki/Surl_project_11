@@ -3,10 +3,10 @@ server:
 spring:
   datasource:
   ### postgre ###
-    url: jdbc:postgresql://lyj-surl-app-db.internal:5432/surl_prod
-    username: postgres
-    password: LlU1NAark7i8sTG
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:mysql://172.17.0.1:3306/surl_prod
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
