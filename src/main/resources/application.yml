@@ -8,12 +8,12 @@ spring:
   profiles:
     active: dev
     include: secret
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.session.SessionAutoConfiguration
+      # this setting makes inactive autoconfigure for redis in my local PC (because redis is on EC2 only)
   datasource:
-    ### postgre ###
-#    url: jdbc:postgresql://localhost:5432/surl_dev
-#    username: postgres
-#    password: koreait123414
-#    driver-class-name: org.postgresql.Driver
     # When you change DB, you don't have to modify source code... JPA will automatically make query which match to your DB.
     # You just need to change build.gradle file and 'datasource' section of setting files (application.yml things).
     ### h2 ###

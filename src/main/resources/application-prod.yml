@@ -1,12 +1,23 @@
 server:
   port: 8080
+  shutdown: graceful # this setting makes spring boot shutdown gently
 spring:
+  autoconfigure:
+    exclude:
+  lifecycle:
+    # this is the time that springboot can wait for when it got exit command
+    timeout-per-shutdown-phase: 1h
   datasource:
   ### postgre ###
     url: jdbc:mysql://172.17.0.1:3306/surl_prod
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 127.17.0.1
+      port: 6379
+      password: ${custom.secret.spring.data.redis.password}
   jpa:
     hibernate:
       ddl-auto: update
