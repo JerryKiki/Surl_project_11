@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-import requests  # HTTP 요청을 위한 모듈 추가
+import requests   # HTTP 요청을 위한 모듈 추가
 import subprocess
 import time
 from typing import Dict, Optional
@@ -46,7 +46,7 @@ class ServiceManager:
     # Docker 컨테이너를 실행하는 함수
     def _run_container(self, name: str, port: int) -> None:
         os.system(
-            f"docker run -d --name={name} --restart unless-stopped -p {port}:8080 -e TZ=Asia/Seoul -v /dockerProjects/surl/volumes/gen:/gen --pull always ghcr.io/jerrykiki/surl")
+            f"docker run -d --name={name} --restart unless-stopped -p {port}:8080 -e TZ=Asia/Seoul -v /dockerProjects/surl/volumes/gen:/gen --pull always ghcr.io/woooyoung/surl")
 
     def _switch_port(self) -> None:
         # Socat 포트를 전환하는 함수
