@@ -25,3 +25,13 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 }
+
+/*
+- return은 해당 statement가 포함된 함수만 끝내지만,
+- throw는 예외처리를 호출자에서 해주지 않으면 해당 쓰레드 전체가 끝난다.
+  - 즉 해당 HTTP 요청에 대한 처리 자체가 끝난다
+- 예외를 발생시키고 예외처리를 하지 않으면 스프링부트가 매뉴얼대로 오류를 처리한다(==whitelabel error page)
+- @ControllerAdvice 클래스에 @ExceptionHandler 메서드를 만들면 오류에 대한 처리를 가로챈다
+- @ExceptionHandler 메서드가 여러개라면 해당 예외상황에 더 적절한 메서드가 알아서 선택된다
+- @ExceptionHandler 메서드가 존재해도 예외상황과 맞는 Handler가 아무것도 없다면 메서드는 작동되지 않음
+ */
