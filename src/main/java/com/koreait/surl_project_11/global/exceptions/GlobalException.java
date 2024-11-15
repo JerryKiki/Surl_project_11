@@ -3,7 +3,10 @@ package com.koreait.surl_project_11.global.exceptions;
 import com.koreait.surl_project_11.global.rsData.RsData;
 import com.koreait.surl_project_11.standard.dto.Empty;
 import lombok.Getter;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 @Getter
+@ResponseStatus
 public class GlobalException extends RuntimeException {
     private final RsData<Empty> rsData;
     public GlobalException() {
