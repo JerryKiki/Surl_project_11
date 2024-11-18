@@ -1,5 +1,6 @@
 package com.koreait.surl_project_11.domain.member.member.controller;
 
+import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.domain.member.member.service.MemberService;
 import com.koreait.surl_project_11.global.rsData.RsData;
 import jakarta.validation.Valid;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiV1MemberController {
     private final MemberService memberService;
 
+    //입력받고 싶은거
     @AllArgsConstructor
     @Getter
     public static class MemberJoinReqBody {
@@ -30,6 +32,15 @@ public class ApiV1MemberController {
         private String password;
         @NotBlank(message = "nickname을 입력하세요")
         private String nickname;
+    }
+
+    //응답에 대해서도 짝을 맞춰주자!
+    //응답 양식을 맞춰주기 위함
+    //내보내고 싶은거
+    @AllArgsConstructor
+    @Getter
+    public static class MemberJoinRespBody {
+        Member item;
     }
 
     //CRUD
@@ -65,7 +76,9 @@ public class ApiV1MemberController {
 //        }
         //이것을 ExceptionHandler에서 처리하게 하자!
 
-        return memberService.join(requestBody.username, requestBody.password, requestBody.nickname);
+        //리턴의 타입과 형태 맞춰주기
+        RsData<Member> joinRs = memberService.join(requestBody.username, requestBody.password, requestBody.nickname);
+        return joinRs.newDataOf(new MemberJoinRespBody(joinRs.getData()));
     }
 
 //    @GetMapping("/testThrowIllegalArgumentException")
@@ -74,3 +87,11 @@ public class ApiV1MemberController {
 //        throw new IllegalArgumentException("IllegalArgumentException");
 //    }
 }
+
+/*
+- 클라이언트가 접근할 수 있는 하나하나의 메서드를 엔드포인트 혹은 액션메서드라고 한다.
+- 액션메서드 위에 관련된 클래스를 두는 것이 추천된다.
+- 액션 메서드마다 보통 클래스가 2개씩 필요하다.
+  - 요청 본문 클래스 : 입력값이 없다면 필요없음
+  - 응답 본문 클래스 : 예시로 들은 것 == MemberJoinRespBody 클래스 => 목적 : join 메서드가 RsData<MemberJoinRespBody> 타입 데이터를 리턴하도록 함
+ */
