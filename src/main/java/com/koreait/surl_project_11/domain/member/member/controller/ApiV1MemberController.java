@@ -39,7 +39,7 @@ public class ApiV1MemberController {
     public RsData join(@RequestBody @Valid MemberJoinReqBody requestBody) { //Body를 객체화해서 받자... 안쪽에서 내용 정리를 한다
 
         //아래는 @NotBlank 어노테이션 + @Valid 어노테이션으로 처리할 수 있다... vaildation 의존성 추가 필요!!
-        //위치는 위를 참고.
+        //위치는 위를 참고. (필드 선언부에 @NotBlank, 객체 선언부에 @Valid)
 
 //        if(Ut.str.isBlank(requestBody.username)) {
 //            //return RsData.of("400-1", "username is blank");
