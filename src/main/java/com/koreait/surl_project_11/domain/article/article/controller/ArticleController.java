@@ -87,4 +87,56 @@ public class ArticleController {
          REST API를 만들어보자. ==> 프론트엔드와 소통하기 위한 것!
          => 여기서 만드는 것은 사람이 바로 쓰는 것이 아니게 될것. 프론트엔드와 추후에 소통하기 위함
          => "스프링으로 레스트하게 만들어와" == "외부(==프론트)에서 사용할 수 있는 형식으로 만들어와"
+
+         POSTMAN ==> 왜씀?
+         - 기계(프론트엔드 앱)와 통신하는 스프링부트 앱을 만드는 행위를 `REST API 서버 구현` or `API 서버 구현`이라고 함.
+         - API 서버를 구현하면서 테스트를 할 때는 브라우저만으로 충분하지 않다
+           - 브라우저의 주소표시줄로는 GET 요청만 발생시킬 수 있다.
+         - 이럴 때 POSTMAN을 사용한다.
+           - 해당 툴로 GET, POST, PUT or PATCH, DELETE HTTP 메서드 요청을 할 수 있으므로.
+           - 쿼리스트링과 요청 본문도 요청에 담고 결과도 확인이 가능하므로.
+
+           HTTP 메서드
+           - GET : 조회
+           - POST : 생성
+           - PUT or PATCH : 수정
+           - DELETE : 삭제
+
+           삭제의 경우
+           - 기존 방식 : GET으로 /article/delete/1 or /article/delete?id=1 (동사 느낌)
+           - 선호되는 방식 : delete 요청으로 보내는 것이 좋다 ==> /article/1 or /article?id=1 (명사 느낌)
+
+           수정의 경우
+           - 기존 방식 : GET으로 /article/modify?id=1&title=제목수정&body=내용수정
+           - 선호되는 방식 : put or patch 요청으로 보내는 것이 좋다
+             /article/1
+             bodyType = application/json
+             body = {
+                "title" : "제목수정",
+                "body" : "내용수정"
+             }
+
+             http 요청을 최대한 활용하는 방법으로 보내는 것이 좋다. ==> 무조건 이걸 쓸수만은 없겠지만 이쪽이 선호된다.
+
+             - URL 은 동사형보다는 명사형으로 쓰는게 좋다.
+             - 게시물 CRUD 로 알아보는 올바른 HTTP 요청 방법
+             - 게시물 생성
+               - 잘못된 방법 : GET /article/write?title=제목&body=내용
+               - 올바른 방법 : POST /articles
+                 헤더, Content-Type : application/json
+                 body : {"title": "제목", "body": "내용"}
+             - 게시물 1번 수정
+               - 잘못된 방법 : GET /article/modify?id=1&title=제목 new&body=내용 new
+               - 올바른 방법 : PUT /articles/1
+                 헤더, Content-Type : application/json
+                 body : {"title": "제목 new", "body": "내용 new"}
+             - 게시물 1번 조회
+               - 잘못된 방법 : GET /article/detail?id=1
+               - 올바른 방법 : GET /articles/1
+             - 게시물들 조회
+               - 잘못된 방법 : GET /article/list
+               - 올바른 방법 : GET /articles
+             - 게시물 1번 삭제
+               - 잘못된 방법 : GET /article/delete?id=1
+               - 올바른 방법 : DELETE /articles/1
          */
