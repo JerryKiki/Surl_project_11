@@ -24,6 +24,10 @@ spring:
     username: sa
     password:
     driver-calss-name: org.h2.Driver
+  # jackson's default setting occurs exception when express empty beans to json, so turned-off that setting with code below.
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
   jpa:
     hibernate:
       # This setting makes JPA to make all entity classes in every execution of the springboot server.

@@ -24,14 +24,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(GlobalException.class)
     //@ResponseStatus(HttpStatus.BAD_REQUEST) //이걸 넣어주면 postman 테스트에서 결과창에 상단에 뜨는 result 자체를 400으로 바꿀 수 있다
     @ResponseBody
-    public ResponseEntity<String> handlerException(GlobalException ex) {
+    //에러를 표현할 때는 데이터를 담을 필요가 없기 때문에 딱 code랑 msg만 담는 rsdata를 보내줄 수 있도록 한다.
+    public ResponseEntity<RsData<Empty>> handlerException(GlobalException ex) {
+
+        log.debug("handlerException started!");
+
         RsData<Empty> rsData = ex.getRsData();
 
         rsData.getStatusCode();
 
 //        log.debug("handleException 2");
         //이렇게 하면 status를 RsData를 활용한 것으로 바꿔줄 수 있다. ==> 내가 RsData에서 설정한 오류코드로 커스텀 가능.
-        return ResponseEntity.status(rsData.getStatusCode()).body(rsData.getMsg());
+        //아래가 최종 형태 => 성공과 실패의 양식을 통일
+        return ResponseEntity
+                .status(rsData.getStatusCode())
+                .body(rsData);
     }
 }
 
