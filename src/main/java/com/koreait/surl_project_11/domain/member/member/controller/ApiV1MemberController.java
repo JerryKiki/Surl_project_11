@@ -43,43 +43,61 @@ public class ApiV1MemberController {
         Member item;
     }
 
-    //CRUD
-    // POST /api/v1/members(/join) => post가 애초에 생성이라는 의미라서 /join은 붙여도 되고 없어도 됨
+    //아래 주석 너무 지저분해서 새로 씀 => ResponseAspect가 있는 상태 기준
     @PostMapping("")
-    //@ResponseBody 직접 응답할 게 아니라서 딱히 필요는 없음
-    public RsData join(@RequestBody @Valid MemberJoinReqBody requestBody) { //Body를 객체화해서 받자... 안쪽에서 내용 정리를 한다
-
-        //아래는 @NotBlank 어노테이션 + @Valid 어노테이션으로 처리할 수 있다... vaildation 의존성 추가 필요!!
-        //위치는 위를 참고. (필드 선언부에 @NotBlank, 객체 선언부에 @Valid)
-
-//        if(Ut.str.isBlank(requestBody.username)) {
-//            //return RsData.of("400-1", "username is blank");
-//            //아래가 더 좋음 : 사유 => 리턴타입을 신경쓸 필요가 없음
-//            //대신 유저가 당황할 수 있기 때문에 exception handler를 통해 exception에 따른 처리방식을 구현해두자!
-//            throw new GlobalException("400-1", "username is blank");
-//        }
-//        if(Ut.str.isBlank(requestBody.password)) {
-//            throw new GlobalException("400-2", "password is blank");
-//        }
-//        if(Ut.str.isBlank(requestBody.nickname)) {
-//            throw new GlobalException("400-3", "nickname is blank");
-//        }
-
-        //서비스에서 예외가 발생하면 catch해서 적절한 처리를 해서 '꾸며주기'
-//        try {
-//            return memberService.join(username, password, nickname);
-//        } catch (GlobalException e) {
-//            if(e.getRsData().getResultCode().equals("400-1")) {
-//                log.debug("Username already exists");
-//            }
-//            return RsData.of("400-C", "custom exception msg", Member.builder().build());
-//        }
-        //이것을 ExceptionHandler에서 처리하게 하자!
-
-        //리턴의 타입과 형태 맞춰주기
+    public RsData<MemberJoinRespBody> join(
+            @RequestBody @Valid MemberJoinReqBody requestBody
+    ) {
         RsData<Member> joinRs = memberService.join(requestBody.username, requestBody.password, requestBody.nickname);
-        return joinRs.newDataOf(new MemberJoinRespBody(joinRs.getData()));
+
+        return joinRs.newDataOf(
+                new MemberJoinRespBody(joinRs.getData())
+        );
     }
+
+
+//    //CRUD
+//    // POST /api/v1/members(/join) => post가 애초에 생성이라는 의미라서 /join은 붙여도 되고 없어도 됨
+//    @PostMapping("")
+//    //@ResponseBody 직접 응답할 게 아니라서 딱히 필요는 없음
+//    //ResponseAspect 없이 Status까지 영향 미치려면 아래처럼 해야.
+//    public ResponseEntity<RsData<MemberJoinRespBody>> join(@RequestBody @Valid MemberJoinReqBody requestBody) { //Body를 객체화해서 받자... 안쪽에서 내용 정리를 한다
+//
+//        //아래는 @NotBlank 어노테이션 + @Valid 어노테이션으로 처리할 수 있다... vaildation 의존성 추가 필요!!
+//        //위치는 위를 참고. (필드 선언부에 @NotBlank, 객체 선언부에 @Valid)
+//
+////        if(Ut.str.isBlank(requestBody.username)) {
+////            //return RsData.of("400-1", "username is blank");
+////            //아래가 더 좋음 : 사유 => 리턴타입을 신경쓸 필요가 없음
+////            //대신 유저가 당황할 수 있기 때문에 exception handler를 통해 exception에 따른 처리방식을 구현해두자!
+////            throw new GlobalException("400-1", "username is blank");
+////        }
+////        if(Ut.str.isBlank(requestBody.password)) {
+////            throw new GlobalException("400-2", "password is blank");
+////        }
+////        if(Ut.str.isBlank(requestBody.nickname)) {
+////            throw new GlobalException("400-3", "nickname is blank");
+////        }
+//
+//        //서비스에서 예외가 발생하면 catch해서 적절한 처리를 해서 '꾸며주기'
+////        try {
+////            return memberService.join(username, password, nickname);
+////        } catch (GlobalException e) {
+////            if(e.getRsData().getResultCode().equals("400-1")) {
+////                log.debug("Username already exists");
+////            }
+////            return RsData.of("400-C", "custom exception msg", Member.builder().build());
+////        }
+//        //이것을 ExceptionHandler에서 처리하게 하자!
+//
+//        //리턴의 타입과 형태 맞춰주기
+//        RsData<Member> joinRs = memberService.join(requestBody.username, requestBody.password, requestBody.nickname);
+//        return ResponseEntity
+//                .status(joinRs.getStatusCode())
+//                .body(
+//                        joinRs.newDataOf(new MemberJoinRespBody(joinRs.getData()))
+//                );
+//    }
 
 //    @GetMapping("/testThrowIllegalArgumentException")
 //    //@ResponseBody

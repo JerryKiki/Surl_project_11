@@ -25,4 +25,8 @@ public class Rq {
         return req.getRequestURI();
     }
 
+    public void setStatusCode(int statusCode) {
+        resp.setStatus(statusCode);
+    }
+
 }
