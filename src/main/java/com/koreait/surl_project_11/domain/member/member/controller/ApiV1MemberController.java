@@ -1,5 +1,6 @@
 package com.koreait.surl_project_11.domain.member.member.controller;
 
+import com.koreait.surl_project_11.domain.member.member.dto.MemberDto;
 import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.domain.member.member.service.MemberService;
 import com.koreait.surl_project_11.global.rsData.RsData;
@@ -40,7 +41,7 @@ public class ApiV1MemberController {
     @AllArgsConstructor
     @Getter
     public static class MemberJoinRespBody {
-        Member item;
+        MemberDto item;
     }
 
     //아래 주석 너무 지저분해서 새로 씀 => ResponseAspect가 있는 상태 기준
@@ -51,7 +52,7 @@ public class ApiV1MemberController {
         RsData<Member> joinRs = memberService.join(requestBody.username, requestBody.password, requestBody.nickname);
 
         return joinRs.newDataOf(
-                new MemberJoinRespBody(joinRs.getData())
+                new MemberJoinRespBody(new MemberDto(joinRs.getData()))
         );
     }
 
