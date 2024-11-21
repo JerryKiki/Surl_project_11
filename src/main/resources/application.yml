@@ -29,6 +29,12 @@ spring:
     serialization:
       fail-on-empty-beans: false
   jpa:
+    # This setting shutdown auto connection with database, because when it is 'true', all tasks try to connect DB and it is inefficient.
+    # With this setting, You should make all methods of controllers "@Transactional" or "@Transactional(readOnly=true)"
+    # which means this controller will connect with DB.
+    # When you make SpringBoot REST API, shutdown OSIV is recommended, because you don't need to make JSP or thymeleaf View.
+    # But if you want to make View file with SpringBoot, not just REST API, then you should turn on this setting.
+    open-in-view: false
     hibernate:
       # This setting makes JPA to make all entity classes in every execution of the springboot server.
       ddl-auto: update

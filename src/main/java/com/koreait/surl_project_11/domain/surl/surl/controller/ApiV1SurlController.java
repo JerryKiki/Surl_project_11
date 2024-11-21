@@ -7,18 +7,21 @@ import com.koreait.surl_project_11.domain.surl.surl.service.SurlService;
 import com.koreait.surl_project_11.global.exceptions.GlobalException;
 import com.koreait.surl_project_11.global.rq.Rq;
 import com.koreait.surl_project_11.global.rsData.RsData;
+import com.koreait.surl_project_11.standard.dto.Empty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/surls")
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly=true)
 public class ApiV1SurlController {
 
     private final Rq rq;
@@ -41,6 +44,7 @@ public class ApiV1SurlController {
 
     @PostMapping("")
     @ResponseBody
+    @Transactional
     public RsData<SurlAddRespBody> add(
             @RequestBody @Valid SurlAddReqBody reqBody
     ) {
@@ -73,6 +77,18 @@ public class ApiV1SurlController {
         return RsData.of(
                 new SurlGetRespBody(new SurlDto(surl))
         );
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public RsData<Empty> delete(
+            @PathVariable long id
+    ) {
+        Surl surl = surlService.findById(id).orElseThrow(GlobalException.E404::new);
+
+        surlService.delete(surl);
+
+        return RsData.OK;
     }
 
 }

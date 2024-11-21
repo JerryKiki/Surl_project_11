@@ -34,4 +34,9 @@ public class SurlService { // 비지니스 로직 처리 담당
     public void increaseCount(Surl surl) {
         surl.increaseCount();
     }
+
+    @Transactional
+    public void delete(Surl surl) {
+        surlRepository.delete(surl);
+    }
 }
