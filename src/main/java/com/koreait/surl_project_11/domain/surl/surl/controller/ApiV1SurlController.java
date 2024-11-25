@@ -1,5 +1,6 @@
 package com.koreait.surl_project_11.domain.surl.surl.controller;
 
+import com.koreait.surl_project_11.domain.auth.auth.service.AuthService;
 import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.domain.surl.surl.dto.SurlDto;
 import com.koreait.surl_project_11.domain.surl.surl.entity.Surl;
@@ -28,6 +29,7 @@ public class ApiV1SurlController {
 
     private final Rq rq;
     private final SurlService surlService;
+    private final AuthService authService;
 
     @AllArgsConstructor
     @Getter
@@ -76,13 +78,15 @@ public class ApiV1SurlController {
     ) {
         Surl surl = surlService.findById(id).orElseThrow(GlobalException.E404::new);
 
-        Member member = rq.getMember();
+//        Member member = rq.getMember();
 
-        //소유권 체크 : 조회, 수정, 삭제 전에 행위자(로그인 한 사람)가 surl 객체의 소유주인지 체크
-        //rq.getMember() ==> 현재는 1번 회원이 리턴되는 중
-        if(!surl.getAuthor().equals(member)) { //id가 'L'ong이라서 equals로 객체비교를 해주는 게 좋다.
-            throw new GlobalException("403-1", "권한이 없습니다.");
-        }
+//        //소유권 체크 : 조회, 수정, 삭제 전에 행위자(로그인 한 사람)가 surl 객체의 소유주인지 체크
+//        //rq.getMember() ==> 현재는 1번 회원이 리턴되는 중
+//        if(!surl.getAuthor().equals(member)) { //id가 'L'ong이라서 equals로 객체비교를 해주는 게 좋다.
+//            throw new GlobalException("403-1", "권한이 없습니다.");
+//        }
+
+        authService.checkCanGetSurl(rq.getMember(), surl);
 
         return RsData.of(
                 new SurlGetRespBody(new SurlDto(surl))
@@ -103,6 +107,7 @@ public class ApiV1SurlController {
 
         // Page
         // QueryDSL
+        // 위에거 찾아보자
 
         return RsData.of(
                 new SurlGetItemsRespBody(
@@ -121,11 +126,7 @@ public class ApiV1SurlController {
     ) {
         Surl surl = surlService.findById(id).orElseThrow(GlobalException.E404::new);
 
-        Member member = rq.getMember();
-
-        if(!surl.getAuthor().equals(member)) {
-            throw new GlobalException("403-1", "권한이 없습니다.");
-        }
+        authService.checkCanDeleteSurl(rq.getMember(), surl);
 
         surlService.delete(surl);
 
@@ -155,11 +156,7 @@ public class ApiV1SurlController {
     ) {
         Surl surl = surlService.findById(id).orElseThrow(GlobalException.E404::new);
 
-        Member member = rq.getMember();
-
-        if(!surl.getAuthor().equals(member)) {
-            throw new GlobalException("403-1", "권한이 없습니다.");
-        }
+        authService.checkCanModifySurl(rq.getMember(), surl);
 
         RsData<Surl> modifyRs = surlService.modify(surl, reqBody.body, reqBody.url);
 
