@@ -19,6 +19,8 @@ public class Rq {
     private final HttpServletResponse resp;
     private final MemberService memberService;
 
+    private Member member;
+
     // ==v1==
     //    public Member getMember() {
     //        return memberService.getReferenceById(3L); //user1
@@ -51,12 +53,22 @@ public class Rq {
       - 따라서 파라미터로 넘겨진 actorUsername에 접근이 가능하다
      */
     public Member getMember() {
+        //만약 같은 요청에서 두번 이상 getMember를 하면 한번 더 세팅하지 않고 빠르게 리턴하도록.
+        //일종의 캐시데이터 방식. 메모리 캐싱. ==> 이걸 더 발전 시켜서 매 요청마다 쿠키로 인증하도록 해보자.
+        if (member != null) return member;
+
         //rq는 rquest scope bean이라서 가능함. 요청(req)때마다 rq가 하나씩 생기니까 req에서 받아올 수 있음
         String actorUsername = req.getParameter("actorUsername");
+        //비밀번호 추가해보자.
+        String actorPassword = req.getParameter("actorPassword");
 
-        if(Ut.str.isBlank(actorUsername)) throw new GlobalException("401-1", "인증정보를 입력해주세요.");
+        if(Ut.str.isBlank(actorUsername)) throw new GlobalException("401-1", "인증정보(아이디)를 입력해주세요.");
+        if(Ut.str.isBlank(actorPassword)) throw new GlobalException("401-2", "인증정보(비밀번호)를 입력해주세요.");
 
-        Member loginedMember = memberService.findByUserName(actorUsername).orElseThrow(()-> new GlobalException("401-2", "인증정보가 올바르지 않습니다."));
+        Member loginedMember = memberService.findByUserName(actorUsername).orElseThrow(()-> new GlobalException("403-3", "해당 회원은 존재하지 않습니다."));
+        if(!loginedMember.getPassword().equals(actorPassword)) throw new GlobalException("403-4", "비밀번호가 틀립니다.");
+
+        member = loginedMember;
 
         return loginedMember;
     }
