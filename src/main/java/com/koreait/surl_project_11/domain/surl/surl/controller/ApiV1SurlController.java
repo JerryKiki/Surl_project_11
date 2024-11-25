@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/surls")
 @RequiredArgsConstructor
@@ -74,10 +76,43 @@ public class ApiV1SurlController {
     ) {
         Surl surl = surlService.findById(id).orElseThrow(GlobalException.E404::new);
 
+        Member member = rq.getMember();
+
+        //소유권 체크 : 조회, 수정, 삭제 전에 행위자(로그인 한 사람)가 surl 객체의 소유주인지 체크
+        //rq.getMember() ==> 현재는 1번 회원이 리턴되는 중
+        if(!surl.getAuthor().equals(member)) { //id가 'L'ong이라서 equals로 객체비교를 해주는 게 좋다.
+            throw new GlobalException("403-1", "권한이 없습니다.");
+        }
+
         return RsData.of(
                 new SurlGetRespBody(new SurlDto(surl))
         );
     }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SurlGetItemsRespBody {
+        private List<SurlDto> items;
+    }
+
+    @GetMapping("")
+    public RsData<SurlGetItemsRespBody> getItems() {
+        Member member = rq.getMember();
+
+        List<Surl> surls = surlService.findByAuthorOrderByIdDesc(member);
+
+        // Page
+        // QueryDSL
+
+        return RsData.of(
+                new SurlGetItemsRespBody(
+                        surls.stream()
+                                .map(SurlDto::new)
+                                .toList()
+                )
+        );
+    }
+
 
     @DeleteMapping("/{id}")
     @Transactional
@@ -86,9 +121,53 @@ public class ApiV1SurlController {
     ) {
         Surl surl = surlService.findById(id).orElseThrow(GlobalException.E404::new);
 
+        Member member = rq.getMember();
+
+        if(!surl.getAuthor().equals(member)) {
+            throw new GlobalException("403-1", "권한이 없습니다.");
+        }
+
         surlService.delete(surl);
 
         return RsData.OK;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SurlModifyReqBody {
+        @NotBlank
+        private String body;
+        @NotBlank
+        private String url;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SurlModifyRespBody {
+        private SurlDto item;
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public RsData<SurlModifyRespBody> modify(
+            @PathVariable long id,
+            @RequestBody @Valid SurlModifyReqBody reqBody
+    ) {
+        Surl surl = surlService.findById(id).orElseThrow(GlobalException.E404::new);
+
+        Member member = rq.getMember();
+
+        if(!surl.getAuthor().equals(member)) {
+            throw new GlobalException("403-1", "권한이 없습니다.");
+        }
+
+        RsData<Surl> modifyRs = surlService.modify(surl, reqBody.body, reqBody.url);
+
+        return modifyRs.newDataOf(
+                new SurlModifyRespBody(
+                        new SurlDto(modifyRs.getData())
+                )
+        );
     }
 
 }
