@@ -2,6 +2,7 @@ package com.koreait.surl_project_11.domain.surl.surl.controller;
 
 import com.koreait.surl_project_11.domain.auth.auth.service.AuthService;
 import com.koreait.surl_project_11.domain.member.member.entity.Member;
+import com.koreait.surl_project_11.domain.member.member.service.MemberService;
 import com.koreait.surl_project_11.domain.surl.surl.dto.SurlDto;
 import com.koreait.surl_project_11.domain.surl.surl.entity.Surl;
 import com.koreait.surl_project_11.domain.surl.surl.service.SurlService;
@@ -30,6 +31,7 @@ public class ApiV1SurlController {
     private final Rq rq;
     private final SurlService surlService;
     private final AuthService authService;
+    private final MemberService memberService;
 
     @AllArgsConstructor
     @Getter
@@ -100,7 +102,12 @@ public class ApiV1SurlController {
     }
 
     @GetMapping("")
-    public RsData<SurlGetItemsRespBody> getItems() {
+    public RsData<SurlGetItemsRespBody> getItems(
+            String actorUsername
+    ) {
+        Member loginedMember = memberService.findByUserName(actorUsername).orElseThrow(GlobalException.E404::new);
+        rq.setMember(loginedMember);
+
         Member member = rq.getMember();
 
         //내가 만든 Surl만 보일 수 있도록.
