@@ -76,14 +76,15 @@ public class ApiV1SurlController {
     // /api/v1/surls?id=1
     @GetMapping("/{id}")
     public RsData<SurlGetRespBody> get(
-            @PathVariable long id
+            @PathVariable long id,
+            String actorUsername
     ) {
         Surl surl = surlService.findById(id).orElseThrow(GlobalException.E404::new);
 
 //        Member member = rq.getMember();
 
 //        //소유권 체크 : 조회, 수정, 삭제 전에 행위자(로그인 한 사람)가 surl 객체의 소유주인지 체크
-//        //rq.getMember() ==> 현재는 id가 3번인 회원(User1)이 리턴되는 중
+//        //rq.getMember() ==> 현재는 id가 3번인 회원(User1)이 리턴되는 중 ==> 개선 완
 //        if(!surl.getAuthor().equals(member)) { //id가 'L'ong이라서 equals로 객체비교를 해주는 게 좋다.
 //            throw new GlobalException("403-1", "권한이 없습니다.");
 //        }
@@ -102,12 +103,12 @@ public class ApiV1SurlController {
     }
 
     @GetMapping("")
-    public RsData<SurlGetItemsRespBody> getItems(
-            String actorUsername
-    ) {
-        Member loginedMember = memberService.findByUserName(actorUsername).orElseThrow(GlobalException.E404::new);
-        rq.setMember(loginedMember);
+    public RsData<SurlGetItemsRespBody> getItems() {
+        
+//        Member loginedMember = memberService.findByUserName(actorUsername).orElseThrow(GlobalException.E404::new);
+//        rq.setMember(loginedMember);
 
+        //rq에서 req를 통해 setting하게 한 뒤로는 위의 코드가 필요없이 이것만 하면 된다
         Member member = rq.getMember();
 
         //내가 만든 Surl만 보일 수 있도록.
