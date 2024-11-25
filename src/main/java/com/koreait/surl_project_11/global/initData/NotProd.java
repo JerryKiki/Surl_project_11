@@ -4,6 +4,8 @@ import com.koreait.surl_project_11.domain.article.article.entity.Article;
 import com.koreait.surl_project_11.domain.article.article.service.ArticleService;
 import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.domain.member.member.service.MemberService;
+import com.koreait.surl_project_11.domain.surl.surl.entity.Surl;
+import com.koreait.surl_project_11.domain.surl.surl.service.SurlService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +32,10 @@ public class NotProd {
 
     private final ArticleService articleService;
     private final MemberService memberService;
+    private final SurlService surlService;
 
     @Bean //빈을 스프링부트에 등록 : 개발자가 new 하지 않아도 스프링부트가 직접 관리하는 객체 (실행될 때 자동으로 생성해서 관리 시작)
-    @Order(4)
+    @Order(4) //All에서 Member를 만들고 나서 article과 surl의 테스트 데이터가 만들어져야한다.
     public ApplicationRunner initNotProd() {
         return args -> {
             //트랜젝션을 두개 만들어보자
@@ -104,6 +107,15 @@ public class NotProd {
 //        article2.setTitle("제목 2-2");
 
 //        articleService.delete(article1);
+
+        //1125 Surl에 대한 sample data 추가
+
+        Surl surl1 = surlService.add(memberUser1, "네이버", "https://www.naver.com").getData();
+        Surl surl2 = surlService.add(memberUser1, "다음", "https://www.daum.net").getData();
+
+        Surl surl3 = surlService.add(memberUser2, "구글", "https://www.google.com").getData();
+        Surl surl4 = surlService.add(memberUser2, "네이버", "https://www.naver.com").getData();
+
     }
 }
 

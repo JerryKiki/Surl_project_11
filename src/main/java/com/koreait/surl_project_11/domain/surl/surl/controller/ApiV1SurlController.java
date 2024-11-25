@@ -81,7 +81,7 @@ public class ApiV1SurlController {
 //        Member member = rq.getMember();
 
 //        //소유권 체크 : 조회, 수정, 삭제 전에 행위자(로그인 한 사람)가 surl 객체의 소유주인지 체크
-//        //rq.getMember() ==> 현재는 1번 회원이 리턴되는 중
+//        //rq.getMember() ==> 현재는 id가 3번인 회원(User1)이 리턴되는 중
 //        if(!surl.getAuthor().equals(member)) { //id가 'L'ong이라서 equals로 객체비교를 해주는 게 좋다.
 //            throw new GlobalException("403-1", "권한이 없습니다.");
 //        }
@@ -103,6 +103,7 @@ public class ApiV1SurlController {
     public RsData<SurlGetItemsRespBody> getItems() {
         Member member = rq.getMember();
 
+        //내가 만든 Surl만 보일 수 있도록.
         List<Surl> surls = surlService.findByAuthorOrderByIdDesc(member);
 
         // Page
