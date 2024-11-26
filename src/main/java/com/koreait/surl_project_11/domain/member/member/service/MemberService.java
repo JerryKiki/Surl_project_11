@@ -5,6 +5,7 @@ import com.koreait.surl_project_11.domain.member.member.repository.MemberReposit
 import com.koreait.surl_project_11.global.exceptions.GlobalException;
 import com.koreait.surl_project_11.global.rsData.RsData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional //service의 public 메소드는 transactional을 붙이는 것이 관례
     //중간에 어떤 상황이든 예외가 났다면 애매한 상태로 남겨두지 않고 롤백을 시켜주는 것이 깔끔
@@ -40,7 +42,7 @@ public class MemberService {
         Member member = Member
                 .builder()
                 .username(username)
-                .password(password)
+                .password(passwordEncoder.encode(password)) //이렇게만 해주면 암호화 끝!
                 .nickname(nickname)
                 .build();
 
