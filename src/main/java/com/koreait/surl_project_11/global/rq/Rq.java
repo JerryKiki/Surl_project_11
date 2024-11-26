@@ -126,6 +126,7 @@ public class Rq {
 
     //쿠키에 필요한 함수
     private String getCookieValue(String cookieName, String defaultValue) {
+        if (req.getCookies() == null) return defaultValue;
         return Arrays.stream(req.getCookies()) // 쿠키 배열을 스트림으로 변환
                 .filter(cookie -> cookie.getName().equals(cookieName))// 쿠키의 이름이 매개변수로 쓰이게
                 .findFirst() // 첫 번째 요소
@@ -133,10 +134,26 @@ public class Rq {
                 .orElse(defaultValue); // 없으면 기본 값
     }
 
+    //로그아웃을 하려면... 서버에서 클라이언트에 있는 cookie 공간을 비워줘야한다. 어떻게 할까?
+    //쿠키에 접근할 수 있다.
+    //단, 쿠키에 대한 편집권은 클라이언트에 있음에 주의하자.
+    public void removeCookie(String cookieName) {
+        Cookie cookie = new Cookie(cookieName, null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        resp.addCookie(cookie);
+    }
+
+    public void setCookie(String cookieName, String value) {
+        Cookie cookie = new Cookie(cookieName, value);
+        cookie.setMaxAge(60 * 60 * 24 * 365);
+        cookie.setPath("/");
+        resp.addCookie(cookie);
+    }
+
     public String getCurrentUrlPath() {
         return req.getRequestURI();
     }
-
     public void setStatusCode(int statusCode) {
         resp.setStatus(statusCode);
     }

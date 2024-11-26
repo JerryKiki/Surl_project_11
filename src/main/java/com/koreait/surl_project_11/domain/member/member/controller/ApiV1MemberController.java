@@ -3,7 +3,10 @@ package com.koreait.surl_project_11.domain.member.member.controller;
 import com.koreait.surl_project_11.domain.member.member.dto.MemberDto;
 import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.domain.member.member.service.MemberService;
+import com.koreait.surl_project_11.global.exceptions.GlobalException;
+import com.koreait.surl_project_11.global.rq.Rq;
 import com.koreait.surl_project_11.global.rsData.RsData;
+import com.koreait.surl_project_11.standard.dto.Empty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -11,10 +14,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController //자동으로 Responsebody를 붙여줌
 @RequestMapping("/api/v1/members") //이 요청에는 이 controller가 반응 : 여기서 v1 뒤에 저기는 복수형인 것이 관례
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Transactional(readOnly=true)
 public class ApiV1MemberController {
     private final MemberService memberService;
+    private final Rq rq;
 
     //입력받고 싶은거
     @AllArgsConstructor
@@ -57,6 +58,46 @@ public class ApiV1MemberController {
         return joinRs.newDataOf(
                 new MemberJoinRespBody(new MemberDto(joinRs.getData()))
         );
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class MemberLoginReqBody {
+        @NotBlank
+        private String username;
+        @NotBlank
+        private String password;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class MemberLoginRespBody {
+        MemberDto item;
+    }
+
+    @PostMapping("/login")
+    @Transactional
+    public RsData<MemberLoginRespBody> login(
+            @RequestBody @Valid MemberLoginReqBody requestBody
+    ) {
+        Member member = memberService.findByUserName(requestBody.username).orElseThrow(() -> new GlobalException("401-1", "해당 회원은 없습니다."));
+        if (!member.getPassword().equals(requestBody.password)) {
+            throw new GlobalException("401-2", "비번 틀림");
+        }
+        rq.setCookie("actorUsername", member.getUsername());
+        rq.setCookie("actorPassword", member.getPassword());
+        return RsData.of(
+                "200-1", "로그인 성공", new MemberLoginRespBody(new MemberDto(member))
+        );
+    }
+
+    @DeleteMapping("/logout")
+    @Transactional
+    public RsData<Empty> logout() {
+        // 쿠키 삭제
+        rq.removeCookie("actorUsername");
+        rq.removeCookie("actorPassword");
+        return RsData.OK;
     }
 
 
