@@ -67,6 +67,7 @@ public class MemberService {
         //슈뢰딩거의 상자처럼 결국 사용자는 무슨 일이 벌어지는지 모르게 된다.
     }
 
+    //AppConfig에서 passwordEncoder로 암호화했기 때문에, passwordEncoder로 검증해야한다.
     //passwordEncoder에 matches라는 함수가 이미 있다. 활용하면 된다.
     //이렇게 하면 최종적으로 유저의 password가 뭔지 관리자도 알 수 없게 된다.
     public boolean matchPassword(String password, String encodedPassword) {
