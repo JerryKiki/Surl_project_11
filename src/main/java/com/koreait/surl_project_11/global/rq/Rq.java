@@ -4,11 +4,14 @@ import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.domain.member.member.service.MemberService;
 import com.koreait.surl_project_11.global.exceptions.GlobalException;
 import com.koreait.surl_project_11.standard.util.Ut;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
+
+import java.util.Arrays;
 
 @Component
 @RequestScope //Rq 클래스의 생명주기를 바꾼다. ==> 요청이 들어올 때마다 Rq 객체가 하나씩 생기고, 요청이 끝나면 죽는다.
@@ -57,23 +60,49 @@ public class Rq {
         //일종의 캐시데이터 방식. 메모리 캐싱. ==> 이걸 더 발전 시켜서 매 요청마다 쿠키로 인증하도록 해보자.
         if (member != null) return member;
 
+        //==v1==
         //rq는 rquest scope bean이라서 가능함. 요청(req)때마다 rq가 하나씩 생기니까 req에서 받아올 수 있음
 //        String actorUsername = req.getParameter("actorUsername");
 //        //비밀번호 추가해보자.
 //        String actorPassword = req.getParameter("actorPassword");
 
+        //==v2==
         //파라미터가 아닌 헤더에서 받아오도록 변경. ==> 다시, 파라미터에 없으면 헤더에서 받아오도록 변경.
         //헤더는 키-밸류 형태로 이루어진, 요청의 구성요소 중 하나. 내가 바꿀 수 없는 구성정보도 존재하는 부분.
         //그러나 추가는 얼마든지 가능하다.
-        String actorUsername = req.getParameter("actorUsername");
-        String actorPassword = req.getParameter("actorPassword");
+//        String actorUsername = req.getParameter("actorUsername");
+//        String actorPassword = req.getParameter("actorPassword");
+
 
 //        if(actorUsername == null) actorUsername = req.getHeader("actorUsername");
 //        if(actorPassword == null) actorPassword = req.getHeader("actorPassword");
 
+        //==v3==
         //다시, Autorization으로 변경.
         //postman tip: header에 하나하나 쓸 필요없이, Authorization에서 inherit auth from parent를 걸고 부모에 bearer token 하나만 걸어도 됨
         //이때는 bearer를 쓸 필요 없이 아이디 비번만 써주면 됨 (생략해도됨, bearer token이라고 명시했으니까)
+        //이렇게 하는 이유 : 보안을 위해.
+//        if(actorUsername == null || actorPassword == null) {
+//            String authorization = req.getHeader("Authorization");
+//            if (authorization != null) {
+//                authorization = authorization.substring("bearer ".length());
+//                String[] authorizationBits = authorization.split(" ", 2);
+//                actorUsername = authorizationBits[0];
+//                actorPassword = authorizationBits.length == 2 ? authorizationBits[1] : null;
+//            }
+//        }
+
+        //==v4==
+        //쿠키를 적용해보자.
+        //쿠키 : 편하게 말하면 '변수' (== 저장공간).
+        //단, http 클라이언트와 http 서버가 공유하는 저장공간.
+        //저장공간은 클라이언트에 잡힌다.
+        //postman 설정 : 부모의 인증을 다시 inherit으로하고, cookie세팅. (cookies -> localhost:8070 입력 -> actorPassword, actorUsername을 key, value로 입력)
+        //쿠키는 특정 사이트에 귀속되고, 해당 사이트로의 통신(요청)이 발생하면 관련된 쿠키가 "자동"으로 헤더에 압축되어 포함된다.
+        String actorUsername = getCookieValue("actorUsername", null);
+        String actorPassword = getCookieValue("actorPassword", null);
+
+        //==v3==의 이 내용은 동일하게 들어가야.
         if(actorUsername == null || actorPassword == null) {
             String authorization = req.getHeader("Authorization");
             if (authorization != null) {
@@ -93,6 +122,15 @@ public class Rq {
         member = loginedMember;
 
         return loginedMember;
+    }
+
+    //쿠키에 필요한 함수
+    private String getCookieValue(String cookieName, String defaultValue) {
+        return Arrays.stream(req.getCookies()) // 쿠키 배열을 스트림으로 변환
+                .filter(cookie -> cookie.getName().equals(cookieName))// 쿠키의 이름이 매개변수로 쓰이게
+                .findFirst() // 첫 번째 요소
+                .map(Cookie::getValue) // 존재하면 쿠키 값으로 매핑
+                .orElse(defaultValue); // 없으면 기본 값
     }
 
     public String getCurrentUrlPath() {
