@@ -58,9 +58,31 @@ public class Rq {
         if (member != null) return member;
 
         //rq는 rquest scope bean이라서 가능함. 요청(req)때마다 rq가 하나씩 생기니까 req에서 받아올 수 있음
+//        String actorUsername = req.getParameter("actorUsername");
+//        //비밀번호 추가해보자.
+//        String actorPassword = req.getParameter("actorPassword");
+
+        //파라미터가 아닌 헤더에서 받아오도록 변경. ==> 다시, 파라미터에 없으면 헤더에서 받아오도록 변경.
+        //헤더는 키-밸류 형태로 이루어진, 요청의 구성요소 중 하나. 내가 바꿀 수 없는 구성정보도 존재하는 부분.
+        //그러나 추가는 얼마든지 가능하다.
         String actorUsername = req.getParameter("actorUsername");
-        //비밀번호 추가해보자.
         String actorPassword = req.getParameter("actorPassword");
+
+//        if(actorUsername == null) actorUsername = req.getHeader("actorUsername");
+//        if(actorPassword == null) actorPassword = req.getHeader("actorPassword");
+
+        //다시, Autorization으로 변경.
+        //postman tip: header에 하나하나 쓸 필요없이, Authorization에서 inherit auth from parent를 걸고 부모에 bearer token 하나만 걸어도 됨
+        //이때는 bearer를 쓸 필요 없이 아이디 비번만 써주면 됨 (생략해도됨, bearer token이라고 명시했으니까)
+        if(actorUsername == null || actorPassword == null) {
+            String authorization = req.getHeader("Authorization");
+            if (authorization != null) {
+                authorization = authorization.substring("bearer ".length());
+                String[] authorizationBits = authorization.split(" ", 2);
+                actorUsername = authorizationBits[0];
+                actorPassword = authorizationBits.length == 2 ? authorizationBits[1] : null;
+            }
+        }
 
         if(Ut.str.isBlank(actorUsername)) throw new GlobalException("401-1", "인증정보(아이디)를 입력해주세요.");
         if(Ut.str.isBlank(actorPassword)) throw new GlobalException("401-2", "인증정보(비밀번호)를 입력해주세요.");
