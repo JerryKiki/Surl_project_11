@@ -117,8 +117,10 @@ public class Rq {
         if(Ut.str.isBlank(actorPassword)) throw new GlobalException("401-2", "인증정보(비밀번호)를 입력해주세요.");
 
         Member loginedMember = memberService.findByUserName(actorUsername).orElseThrow(()-> new GlobalException("403-3", "해당 회원은 존재하지 않습니다."));
-        if(!loginedMember.getPassword().equals(actorPassword)) throw new GlobalException("403-4", "비밀번호가 틀립니다.");
-
+//        if(!loginedMember.getPassword().equals(actorPassword)) throw new GlobalException("403-4", "비밀번호가 틀립니다.");
+        //security를 도입했으니 이렇게 수정해주자. 암호화된 패스워드와 입력된 패스워드의 일치/불일치 여부를 판단해주는 함수를 만듦.
+        //Rq에 비즈니스로직을 만들면 좋지 않아서 이렇게 memberService의 함수로 뺌, 여기서 한다고 못하는 건 아님
+        if(!memberService.matchPassword(actorPassword, loginedMember.getPassword())) throw new GlobalException("403-4", "비밀번호가 틀립니다.");
         member = loginedMember;
 
         return loginedMember;
