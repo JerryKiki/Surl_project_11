@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +45,7 @@ public class MemberService {
                 .username(username)
                 .password(passwordEncoder.encode(password)) //이렇게만 해주면 암호화 끝!
                 .nickname(nickname)
+                .apiKey(UUID.randomUUID().toString())
                 .build();
 
         memberRepository.save(member);
@@ -72,5 +74,13 @@ public class MemberService {
     //이렇게 하면 최종적으로 유저의 password가 뭔지 관리자도 알 수 없게 된다.
     public boolean matchPassword(String password, String encodedPassword) {
         return passwordEncoder.matches(password, encodedPassword);
+    }
+
+    public Optional<Member> findById(long id) {
+        return memberRepository.findById(id);
+    }
+
+    public Optional<Member> findByApiKey(String apiKey) {
+        return memberRepository.findByApiKey(apiKey);
     }
 }

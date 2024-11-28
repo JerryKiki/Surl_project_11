@@ -1,9 +1,12 @@
 package com.koreait.surl_project_11.global.security;
 
+import com.koreait.surl_project_11.global.rsData.RsData;
+import com.koreait.surl_project_11.standard.util.Ut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,9 +29,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizationRequests ->
                         authorizationRequests
+                                .requestMatchers(HttpMethod.POST, "/api/*/members", "/api/*/members/login").permitAll()
                                 .requestMatchers("/h2-console/**").permitAll() //여기 갈때는 제지 안해도 돼(h2 콘솔 접근)
                                 .requestMatchers("/actuator/**").permitAll() //여기 갈때는 제지 안해도 돼(배포 관련)
-                                .anyRequest().authenticated() //나머지에 대해서는 인증 필요
+                                .anyRequest().authenticated() //나머지에 대해서는 인증(시큐리티가 이해하는 방식으로!) 필요
                 )
                 //아래는 우선 h2-console을 사용하기 위함임. ( + Rest API를 만들고 있어서 끈것이기도 함.)
                 //h2-console과 security는 서로 친한 관계가 아니라서, csrf(공격의 일종)이 켜져있으면 막혀버린다. 그것을 꺼주는 것
@@ -45,7 +49,20 @@ public class SecurityConfig {
                         csrf ->
                                 csrf.disable()
                 )
-                .formLogin(formLogin -> formLogin.permitAll()) //로그인 화면은 허용해 (이거 안하면 로그인창 접근도 거부돼서 그냥 엑세스 거부됨만 뜸)
+                .formLogin(formLogin -> formLogin.permitAll()  //로그인 화면은 허용해 (이거 안하면 로그인창 접근도 거부돼서 그냥 엑세스 거부됨만 뜸)
+                )
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(
+                                (request, response, authException) -> {
+                                    response.setContentType("application/json; charset=utf-8");
+                                    response.setStatus(403);
+                                    response.getWriter().write(
+                                            Ut.json.toString(
+                                                    RsData.of("403-1", request.getRequestURI() + ", " + authException.getLocalizedMessage())
+                                            )
+                                    );
+                                }
+                        ))
                 //로그인 됐다 안됐다를 판단하기 전에 CustomerAuthenticationFilter 먼저 인식해줘.
                 //CustomerAuthenticationFilter는 쿠키(actorUsername, actorPassword)를 체크해서,
                 //이게 올바르다면 스프링 시큐리티가 이해할 수 있는 방식으로 "이것이 로그인 상태다"라고 알려줘야함.

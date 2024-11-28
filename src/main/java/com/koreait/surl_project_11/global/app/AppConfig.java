@@ -1,5 +1,8 @@
 package com.koreait.surl_project_11.global.app;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,6 +12,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 //다만, 위치에 따라 Bean이 등록되는 순서가 차이가 있을 수 있으므로 분리해두는게 좋다.
 @Configuration
 public class AppConfig {
+
+    //잭슨(복습: 자동으로 json 등으로 바꿔주는 번역기같은 놈)의 Bean을 받아오는 기능
+    @Getter
+    public static ObjectMapper objectMapper;
+
+    @Autowired
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     //비밀번호 암호화를 위한 Bean
     @Bean
