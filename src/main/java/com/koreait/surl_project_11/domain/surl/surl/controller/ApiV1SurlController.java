@@ -24,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/surls")
+//@RequestMapping(value = "/api/v1/surls", produces = APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly=true)

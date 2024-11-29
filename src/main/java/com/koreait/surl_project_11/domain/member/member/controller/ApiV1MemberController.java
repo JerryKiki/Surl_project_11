@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController //자동으로 Responsebody를 붙여줌
 @RequestMapping("/api/v1/members") //이 요청에는 이 controller가 반응 : 여기서 v1 뒤에 저기는 복수형인 것이 관례
+//@RequestMapping(value = "/api/v1/members", produces = APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly=true)
