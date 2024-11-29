@@ -32,6 +32,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/*/members", "/api/*/members/login").permitAll()
                                 .requestMatchers("/h2-console/**").permitAll() //여기 갈때는 제지 안해도 돼(h2 콘솔 접근)
                                 .requestMatchers("/actuator/**").permitAll() //여기 갈때는 제지 안해도 돼(배포 관련)
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/g/*").permitAll()
                                 .anyRequest().authenticated() //나머지에 대해서는 인증(시큐리티가 이해하는 방식으로!) 필요
                 )
                 //아래는 우선 h2-console을 사용하기 위함임. ( + Rest API를 만들고 있어서 끈것이기도 함.)

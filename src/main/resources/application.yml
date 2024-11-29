@@ -44,6 +44,8 @@ spring:
         format_sql: true
         highlight_sql: ture
         use_sql_comments: true
+springdoc:
+  default-produces-media-type: application/json
 # This setting makes console to show sql logs which JPA sent.
 logging:
   level:

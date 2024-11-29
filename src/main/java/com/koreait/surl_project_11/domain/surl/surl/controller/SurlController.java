@@ -1,79 +1,78 @@
 package com.koreait.surl_project_11.domain.surl.surl.controller;
 
-import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.domain.surl.surl.entity.Surl;
 import com.koreait.surl_project_11.domain.surl.surl.service.SurlService;
 import com.koreait.surl_project_11.global.exceptions.GlobalException;
 import com.koreait.surl_project_11.global.rq.Rq;
-import com.koreait.surl_project_11.global.rsData.RsData;
-import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "SurlController", description = "Surl 컨트롤러")
 @Transactional(readOnly=true)
 public class SurlController {
 
     private final Rq rq;
     private final SurlService surlService;
 
-    @GetMapping("/add")
-    @ResponseBody
-    @Transactional
-    public RsData<Surl> add(String body, String url) {
-
-        //프록시 객체로 get하기 때문에 이때는 깡통 객체고,
-        Member member = rq.getMember(); //현재 브라우저로 로그인 한 회원 정보
-
-        //이때 채운다. (안을 까보려고 했기 때문) ==> 이때 sql을 슬쩍 실행해서 진짜를 채운다
-        // ==> 필요에 의해서 효율적으로 sql을 실행할 수 있다!
-        //빈 깡통이라 발생하는 문제도 있으므로 완전히 이해하기 전까지는 주의해서 사용하자
-        //프로덕션 모드에서, sout보다 log.debug를 사용하는 것을 훨씬 추천
-        log.debug("before get id");
-        member.getId();
-        log.debug("after get id");
-
-        System.out.println("before get username");
-        member.getUsername();
-        System.out.println("after get username");
-
-        return surlService.add(member, body, url);
-    }
-
-    @GetMapping("/s/{body}/**")
-    @ResponseBody
-    @Transactional
-    public RsData<Surl> add(
-            @PathVariable String body,
-            HttpServletRequest req
-    ) {
-
-        Member member = rq.getMember();
-
-        String url = req.getRequestURI();
-
-        //복잡한 url이 들어왔을 때 queryString이 잘리지 않도록 하기 위함
-        if(req.getQueryString() != null) {
-            url += "?" + req.getQueryString();
-        }
-
-        String[] urlBits = url.split("/", 4);
-
-        url = urlBits[3];
-
-        return surlService.add(member, body, url);
-    }
+//    @GetMapping("/add")
+//    @ResponseBody
+//    @Transactional
+//    public RsData<Surl> add(String body, String url) {
+//
+//        //프록시 객체로 get하기 때문에 이때는 깡통 객체고,
+//        Member member = rq.getMember(); //현재 브라우저로 로그인 한 회원 정보
+//
+//        //이때 채운다. (안을 까보려고 했기 때문) ==> 이때 sql을 슬쩍 실행해서 진짜를 채운다
+//        // ==> 필요에 의해서 효율적으로 sql을 실행할 수 있다!
+//        //빈 깡통이라 발생하는 문제도 있으므로 완전히 이해하기 전까지는 주의해서 사용하자
+//        //프로덕션 모드에서, sout보다 log.debug를 사용하는 것을 훨씬 추천
+//        log.debug("before get id");
+//        member.getId();
+//        log.debug("after get id");
+//
+//        System.out.println("before get username");
+//        member.getUsername();
+//        System.out.println("after get username");
+//
+//        return surlService.add(member, body, url);
+//    }
+//
+//    @GetMapping("/s/{body}/**")
+//    @ResponseBody
+//    @Transactional
+//    public RsData<Surl> add(
+//            @PathVariable String body,
+//            HttpServletRequest req
+//    ) {
+//
+//        Member member = rq.getMember();
+//
+//        String url = req.getRequestURI();
+//
+//        //복잡한 url이 들어왔을 때 queryString이 잘리지 않도록 하기 위함
+//        if(req.getQueryString() != null) {
+//            url += "?" + req.getQueryString();
+//        }
+//
+//        String[] urlBits = url.split("/", 4);
+//
+//        url = urlBits[3];
+//
+//        return surlService.add(member, body, url);
+//    }
 
     @GetMapping("/g/{id}")
+    @Transactional
+    @Operation(summary = "원본 URL로 리다이렉트")
     public String go(
             @PathVariable long id
     ){
@@ -84,11 +83,11 @@ public class SurlController {
         return "redirect:" + surl.getUrl();
     }
 
-    @GetMapping("/all")
-    @ResponseBody
-    public List<Surl> getAll() {
-        return surlService.findAll();
-    }
+//    @GetMapping("/all")
+//    @ResponseBody
+//    public List<Surl> getAll() {
+//        return surlService.findAll();
+//    }
 }
 
 /*

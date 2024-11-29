@@ -6,11 +6,13 @@ import com.koreait.surl_project_11.global.rsData.RsData;
 import com.koreait.surl_project_11.standard.dto.Empty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -33,6 +35,7 @@ public class GlobalExceptionHandler {
     //아래는 명시적으로 처리하지 않은 넓은 범위의 Exception을 처리하기 위한 코드
     //기타이기 때문에 원래 모양대로 내버려둔다 ==> 상정한 exception이 아니면 print trace(예외 발생에 대한 자세한 경위)를 보는게 좋으니깐.
     private Rq rq;
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception ex) {
         Map<String, Object> body = new LinkedHashMap<>();
@@ -51,7 +54,7 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler(GlobalException.class)
-    //@ResponseStatus(HttpStatus.BAD_REQUEST) //이걸 넣어주면 postman 테스트에서 결과창에 상단에 뜨는 result 자체를 400으로 바꿀 수 있다
+    @ResponseStatus(HttpStatus.BAD_REQUEST) //이걸 넣어주면 postman 테스트에서 결과창에 상단에 뜨는 result 자체를 400으로 바꿀 수 있다
     @ResponseBody
     //에러를 표현할 때는 데이터를 담을 필요가 없기 때문에 딱 code랑 msg만 담는 rsdata를 보내줄 수 있도록 한다.
     public ResponseEntity<RsData<Empty>> handlerException(GlobalException ex) {
@@ -63,6 +66,7 @@ public class GlobalExceptionHandler {
         //아래가 최종 형태 => 성공과 실패의 양식을 통일
         return ResponseEntity
                 .status(rsData.getStatusCode())
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(rsData);
     }
 
