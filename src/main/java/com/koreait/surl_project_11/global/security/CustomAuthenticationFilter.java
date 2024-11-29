@@ -1,7 +1,9 @@
 package com.koreait.surl_project_11.global.security;
 
+import com.koreait.surl_project_11.domain.auth.auth.service.AuthTokenService;
 import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.domain.member.member.service.MemberService;
+import com.koreait.surl_project_11.global.app.AppConfig;
 import com.koreait.surl_project_11.global.rq.Rq;
 import com.koreait.surl_project_11.standard.util.Ut;
 import jakarta.servlet.FilterChain;
@@ -9,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.util.List;
+import java.util.Map;
 
 //쿠키가 있으면 인증이 된 상태야! 라는 걸 시큐리티에게 알려주기 위한 필터클래스.
 //필터기능 구현
@@ -25,10 +29,12 @@ import java.util.List;
 //대신 쿠키의 인증정보가 올바르다면 시큐리티에 인증정보를 등록
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
     private final MemberService memberService;
     private final Rq rq;
+    private final AuthTokenService authTokenService;
 
     @Override
     @SneakyThrows
@@ -36,31 +42,52 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 //        String actorUsername = rq.getCookieValue("actorUsername", null);
 //        String actorPassword = rq.getCookieValue("actorPassword", null);
         //apiKey 사용으로 변경
-        String apiKey = rq.getCookieValue("apiKey", null);
-        if (apiKey == null) {
+//        String apiKey = rq.getCookieValue("apiKey", null);
+
+        //토큰 사용으로 변경
+        String accessToken = rq.getCookieValue("accessToken", null);
+        //리프레시토큰 추가
+        String refreshToken = rq.getCookieValue("refreshToken", null);
+
+        if (accessToken  == null) {
             String authorization = req.getHeader("Authorization");
             if (authorization != null) {
-//                authorization = authorization.substring("bearer ".length());
-//                String[] authorizationBits = authorization.split(" ", 2);
-//                actorUsername = authorizationBits[0];
-//                actorPassword = authorizationBits.length == 2 ? authorizationBits[1] : null;
-                apiKey = authorization.substring("bearer ".length());
+//                accessToken = authorization.substring("bearer ".length());
+                String[] authorizationBits = authorization.substring("bearer ".length()).split(" ", 2);
+                if (authorizationBits.length == 2) {
+                    accessToken = authorizationBits[0];
+                    refreshToken = authorizationBits[1];
+                }
             }
         }
-        if (Ut.str.isBlank(apiKey)) {
+        if (Ut.str.isBlank(accessToken) || Ut.str.isBlank(refreshToken)) {
             filterChain.doFilter(req, resp);
             return;
         }
-        Member loginedMember = memberService.findByApiKey(apiKey).orElse(null);
-        if (loginedMember == null) {
-            filterChain.doFilter(req, resp);
-            return;
+
+//        Member loginedMember = memberService.findByApiKey(apiKey).orElse(null);
+        if (!authTokenService.validateToken(accessToken)) {
+//            filterChain.doFilter(req, resp);
+//            return;
+            Member member = memberService.findByRefreshToken(refreshToken).orElse(null);
+            if (member == null) {
+                filterChain.doFilter(req, resp);
+                return;
+            }
+            String newAccessToken = authTokenService.genToken(member, AppConfig.getAccessTokenExpirationSec());
+            rq.setCookie("accessToken", newAccessToken);
+            log.debug("accessToken renewed: {}", newAccessToken);
+            accessToken = newAccessToken;
         }
 
         //Member의 정보를 담은 User(==Security가 이해하는 Member의 형태)를 알려준다.
 //        User user = new User(loginedMember.getUsername(), "", List.of());
         //id 사용으로 변경
-        User user = new User(loginedMember.getId() + "", "", List.of());
+//        User user = new User(loginedMember.getId() + "", "", List.of());
+        //토큰 사용을 위한 변경
+        Map<String, Object> accessTokenData = authTokenService.getDataFrom(accessToken);
+        long id = (int) accessTokenData.get("id");
+        User user = new User(id + "", "", List.of());
         Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(req, resp); //필터를 종료하고 다음 턴으로 넘긴다.

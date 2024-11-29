@@ -45,7 +45,7 @@ public class MemberService {
                 .username(username)
                 .password(passwordEncoder.encode(password)) //이렇게만 해주면 암호화 끝!
                 .nickname(nickname)
-                .apiKey(UUID.randomUUID().toString())
+                .refreshToken(UUID.randomUUID().toString())
                 .build();
 
         memberRepository.save(member);
@@ -80,7 +80,7 @@ public class MemberService {
         return memberRepository.findById(id);
     }
 
-    public Optional<Member> findByApiKey(String apiKey) {
-        return memberRepository.findByApiKey(apiKey);
+    public Optional<Member> findByRefreshToken(String refreshToken) {
+        return memberRepository.findByRefreshToken(refreshToken);
     }
 }

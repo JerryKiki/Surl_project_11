@@ -1,8 +1,11 @@
 package com.koreait.surl_project_11.domain.member.member.controller;
 
+import com.koreait.surl_project_11.domain.auth.auth.service.AuthService;
+import com.koreait.surl_project_11.domain.auth.auth.service.AuthTokenService;
 import com.koreait.surl_project_11.domain.member.member.dto.MemberDto;
 import com.koreait.surl_project_11.domain.member.member.entity.Member;
 import com.koreait.surl_project_11.domain.member.member.service.MemberService;
+import com.koreait.surl_project_11.global.app.AppConfig;
 import com.koreait.surl_project_11.global.exceptions.GlobalException;
 import com.koreait.surl_project_11.global.rq.Rq;
 import com.koreait.surl_project_11.global.rsData.RsData;
@@ -24,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 public class ApiV1MemberController {
     private final MemberService memberService;
     private final Rq rq;
+    private final AuthService authService;
+    private final AuthTokenService authTokenService;
 
     //입력받고 싶은거
     @AllArgsConstructor
@@ -84,7 +89,9 @@ public class ApiV1MemberController {
         if (!memberService.matchPassword(requestBody.password, member.getPassword())) {
             throw new GlobalException("401-2", "비번 틀림");
         }
-        rq.setCookie("apiKey", member.getApiKey());
+        String accessToken = authTokenService.genToken(member, AppConfig.getAccessTokenExpirationSec());
+        rq.setCookie("accessToken", accessToken);
+        rq.setCookie("refreshToken", member.getRefreshToken());
         return RsData.of(
                 "200-1", "로그인 성공", new MemberLoginRespBody(new MemberDto(member))
         );

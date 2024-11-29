@@ -173,4 +173,16 @@ public class Rq {
 
 }
 
+/*
+시크릿키로 서명해야 JWT가 완성된다. 이후 같은 키로 해당 JWT의 조작여부를 빠르게 알 수 있다
+appilcation-secret.yml이 수정됐다 -> GITHUB의 시크릿 변수도 수정해야함
+AuthTokenService
+특정 회원의 JWT를 생성해줌
+JWT는 만료의 개념이 있다
+JWT는 정보(내용)를 직접 넣을 수 있다
+보통 회원의 식별자를 넣는다
+JWT를 보고 누구의 토큰인지 알아야하기 때문에
+로그인 성공시 accessToken 이라는 쿠키가 생기고 회원의 JWT를 저장함
+ */
+
 
