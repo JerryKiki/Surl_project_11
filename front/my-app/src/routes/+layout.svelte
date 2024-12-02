@@ -1,6 +1,15 @@
-<script lang="ts">
-	import '../app.css';
-	let { children } = $props();
-</script>
+<!--자신과 같은 위상에 있는 페이지, 자신과 같은 위상에 있는 폴더의 하위 페이지들에 모두 적용-->
+<header>
+	<nav>
+		<a href="/">메인</a>
+		<a href="/about">설명</a>
+	</nav>
+</header>
 
-{@render children()}
+<slot></slot> <!--원래의 페이지에 있던 요소가 들어갈 자리-->
+
+<footer>
+	<nav>
+		<a href="/home/links">링크들</a>
+	</nav>
+</footer>
