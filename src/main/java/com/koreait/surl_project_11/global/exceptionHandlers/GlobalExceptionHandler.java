@@ -5,6 +5,7 @@ import com.koreait.surl_project_11.global.rq.Rq;
 import com.koreait.surl_project_11.global.rsData.RsData;
 import com.koreait.surl_project_11.standard.dto.Empty;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,11 @@ public class GlobalExceptionHandler {
     //아래는 명시적으로 처리하지 않은 넓은 범위의 Exception을 처리하기 위한 코드
     //기타이기 때문에 원래 모양대로 내버려둔다 ==> 상정한 exception이 아니면 print trace(예외 발생에 대한 자세한 경위)를 보는게 좋으니깐.
     private Rq rq;
+
+    @Autowired
+    public GlobalExceptionHandler(Rq rq) {
+        this.rq = rq;
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception ex) {
