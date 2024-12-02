@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 @Tag(name = "HomeController", description = "홈 컨트롤러")
 public class HomeController {
     @Value("${custom.site.name}")

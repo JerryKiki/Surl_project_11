@@ -18,12 +18,11 @@ import org.springframework.core.annotation.Order;
 @Slf4j
 public class All { //언제나 생성됨
 
+    private final ArticleService articleService;
+    private final MemberService memberService;
     @Lazy
     @Autowired
     private All self;
-
-    private final ArticleService articleService;
-    private final MemberService memberService;
 
     @Bean
     @Order(3) //서버 시작 시 실행 순서 : 다른 모든것들이 실행된 다음 실행되어야하므로 3번으로 시작됨 (멤버부터 제작)
@@ -37,7 +36,7 @@ public class All { //언제나 생성됨
     public void work1() {
         log.debug("initAll started");
 
-        if(memberService.count() > 0) return; //멤버가 이미 있으면 추가 X
+        if (memberService.count() > 0) return; //멤버가 이미 있으면 추가 X
 
         //system, admin 두개는 보통 관례
         Member memberSystem = memberService.join("system", "1234", "시스템").getData();

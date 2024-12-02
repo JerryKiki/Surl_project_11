@@ -27,28 +27,13 @@ import java.util.List;
 //@RequestMapping(value = "/api/v1/surls", produces = APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class ApiV1SurlController {
 
     private final Rq rq;
     private final SurlService surlService;
     private final AuthService authService;
     private final MemberService memberService;
-
-    @AllArgsConstructor
-    @Getter
-    public static class SurlAddReqBody {
-        @NotBlank
-        private String body;
-        @NotBlank
-        private String url;
-    }
-
-    @AllArgsConstructor
-    @Getter
-    public static class SurlAddRespBody {
-        private SurlDto item;
-    }
 
     @PostMapping("")
     @ResponseBody
@@ -66,12 +51,6 @@ public class ApiV1SurlController {
                         new SurlDto(addRs.getData())
                 )
         );
-    }
-
-    @AllArgsConstructor
-    @Getter
-    public static class SurlGetRespBody {
-        private SurlDto item;
     }
 
     // /api/v1/surls/{id}
@@ -100,16 +79,10 @@ public class ApiV1SurlController {
         );
     }
 
-    @AllArgsConstructor
-    @Getter
-    public static class SurlGetItemsRespBody {
-        private List<SurlDto> items;
-    }
-
     @GetMapping("")
     @Operation(summary = "다건조회")
     public RsData<SurlGetItemsRespBody> getItems() {
-        
+
 //        Member loginedMember = memberService.findByUserName(actorUsername).orElseThrow(GlobalException.E404::new);
 //        rq.setMember(loginedMember);
 
@@ -132,7 +105,6 @@ public class ApiV1SurlController {
         );
     }
 
-
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "삭제")
@@ -146,21 +118,6 @@ public class ApiV1SurlController {
         surlService.delete(surl);
 
         return RsData.OK;
-    }
-
-    @AllArgsConstructor
-    @Getter
-    public static class SurlModifyReqBody {
-        @NotBlank
-        private String body;
-        @NotBlank
-        private String url;
-    }
-
-    @AllArgsConstructor
-    @Getter
-    public static class SurlModifyRespBody {
-        private SurlDto item;
     }
 
     @PutMapping("/{id}")
@@ -181,6 +138,48 @@ public class ApiV1SurlController {
                         new SurlDto(modifyRs.getData())
                 )
         );
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SurlAddReqBody {
+        @NotBlank
+        private String body;
+        @NotBlank
+        private String url;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SurlAddRespBody {
+        private SurlDto item;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SurlGetRespBody {
+        private SurlDto item;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SurlGetItemsRespBody {
+        private List<SurlDto> items;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SurlModifyReqBody {
+        @NotBlank
+        private String body;
+        @NotBlank
+        private String url;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SurlModifyRespBody {
+        private SurlDto item;
     }
 
 }

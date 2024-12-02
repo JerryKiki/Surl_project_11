@@ -26,35 +26,13 @@ import org.springframework.web.bind.annotation.*;
 //@RequestMapping(value = "/api/v1/members", produces = APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 @Tag(name = "ApiMemberController", description = "회원 CRUD 컨트롤러")
 public class ApiV1MemberController {
     private final MemberService memberService;
     private final Rq rq;
     private final AuthService authService;
     private final AuthTokenService authTokenService;
-
-    //입력받고 싶은거
-    @AllArgsConstructor
-    @Getter
-    public static class MemberJoinReqBody {
-        //private이지만 내부 클래스라서 MemberController Class 내에서는 getter 없이 사용 가능함
-        @NotBlank(message = "username을 입력하세요")
-        private String username;
-        @NotBlank(message = "password를 입력하세요")
-        private String password;
-        @NotBlank(message = "nickname을 입력하세요")
-        private String nickname;
-    }
-
-    //응답에 대해서도 짝을 맞춰주자!
-    //응답 양식을 맞춰주기 위함
-    //내보내고 싶은거
-    @AllArgsConstructor
-    @Getter
-    public static class MemberJoinRespBody {
-        MemberDto item;
-    }
 
     //아래 주석 너무 지저분해서 새로 씀 => ResponseAspect가 있는 상태 기준
     @PostMapping("")
@@ -68,21 +46,6 @@ public class ApiV1MemberController {
         return joinRs.newDataOf(
                 new MemberJoinRespBody(new MemberDto(joinRs.getData()))
         );
-    }
-
-    @AllArgsConstructor
-    @Getter
-    public static class MemberLoginReqBody {
-        @NotBlank
-        private String username;
-        @NotBlank
-        private String password;
-    }
-
-    @AllArgsConstructor
-    @Getter
-    public static class MemberLoginRespBody {
-        MemberDto item;
     }
 
     @PostMapping("/login")
@@ -111,6 +74,43 @@ public class ApiV1MemberController {
         rq.removeCookie("actorUsername");
         rq.removeCookie("actorPassword");
         return RsData.OK;
+    }
+
+    //입력받고 싶은거
+    @AllArgsConstructor
+    @Getter
+    public static class MemberJoinReqBody {
+        //private이지만 내부 클래스라서 MemberController Class 내에서는 getter 없이 사용 가능함
+        @NotBlank(message = "username을 입력하세요")
+        private String username;
+        @NotBlank(message = "password를 입력하세요")
+        private String password;
+        @NotBlank(message = "nickname을 입력하세요")
+        private String nickname;
+    }
+
+    //응답에 대해서도 짝을 맞춰주자!
+    //응답 양식을 맞춰주기 위함
+    //내보내고 싶은거
+    @AllArgsConstructor
+    @Getter
+    public static class MemberJoinRespBody {
+        MemberDto item;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class MemberLoginReqBody {
+        @NotBlank
+        private String username;
+        @NotBlank
+        private String password;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class MemberLoginRespBody {
+        MemberDto item;
     }
 
 

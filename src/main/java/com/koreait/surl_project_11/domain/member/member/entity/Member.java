@@ -16,7 +16,7 @@ import static lombok.AccessLevel.PROTECTED;
 //@EntityListeners(AuditingEntityListener.class) //CreatedDate와 ModifiedDate 어노테이션이 작동하도록 하는 어노테이션
 public class Member extends BaseTime {
 
-//    @Id //이 필드를 PRIMARY KEY로 만들거야
+    //    @Id //이 필드를 PRIMARY KEY로 만들거야
 //    @GeneratedValue(strategy = IDENTITY) //프라이머리키 값을 자동으로 생성할 때 사용 (==AUTO_INCREMENT)
 //    private long id;
 //    @CreatedDate

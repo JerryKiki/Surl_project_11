@@ -17,6 +17,10 @@ public class AppConfig {
     //잭슨(복습: 자동으로 json 등으로 바꿔주는 번역기같은 놈)의 Bean을 받아오는 기능
     @Getter
     public static ObjectMapper objectMapper;
+    @Getter
+    private static String jwtSecretKey;
+    @Getter
+    private static long accessTokenExpirationSec;
 
     @Autowired
     public void setObjectMapper(ObjectMapper objectMapper) {
@@ -29,14 +33,11 @@ public class AppConfig {
         return new BCryptPasswordEncoder(); //보안성이 매우 뛰어남! => 암호가 동일하게 1234여도 모두 다르게 인코딩되는 것을 확인할 수 있다.
     }
 
-    @Getter
-    private static String jwtSecretKey;
     @Value("${custom.secret.jwt.secretKey}")
     public void setJwtSecretKey(String jwtSecretKey) {
         this.jwtSecretKey = jwtSecretKey;
     }
-    @Getter
-    private static long accessTokenExpirationSec;
+
     @Value("${custom.accessToken.expirationSec}")
     public void setJwtSecretKey(long accessTokenExpirationSec) {
         this.accessTokenExpirationSec = accessTokenExpirationSec;

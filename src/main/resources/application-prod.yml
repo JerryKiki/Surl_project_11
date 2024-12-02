@@ -8,7 +8,7 @@ spring:
     # this is the time that springboot can wait for when it got exit command
     timeout-per-shutdown-phase: 1h
   datasource:
-  ### postgre ###
+    ### postgre ###
     url: jdbc:mysql://172.17.0.1:3306/surl_prod
     username: root
     password: 1234

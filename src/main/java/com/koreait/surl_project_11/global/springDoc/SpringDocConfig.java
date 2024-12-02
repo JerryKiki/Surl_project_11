@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 @Configuration
 @OpenAPIDefinition(info = @Info(title = "APP-API", version = "V1"))
 @SecurityScheme(
@@ -23,6 +24,7 @@ public class SpringDocConfig {
                 .pathsToMatch("/api/v1/**")
                 .build();
     }
+
     @Bean
     public GroupedOpenApi groupController() {
         return GroupedOpenApi.builder()

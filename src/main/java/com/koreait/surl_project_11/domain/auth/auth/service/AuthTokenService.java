@@ -37,6 +37,7 @@ public class AuthTokenService {
             return false;
         }
     }
+
     public Map<String, Object> getDataFrom(String token) {
         Claims payload = Jwts.parser()
                 .setSigningKey(AppConfig.getJwtSecretKey())

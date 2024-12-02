@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 //satus 코드 자체를 응답 코드로 동기화시키기 ==> 패턴 감지
 public class ResponseAspect {
     private final Rq rq;
+
     @Around("""
             (
                 within

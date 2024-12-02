@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-import requests   # HTTP 요청을 위한 모듈 추가
+import requests  # HTTP 요청을 위한 모듈 추가
 import subprocess
 import time
 from typing import Dict, Optional

@@ -49,7 +49,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         //리프레시토큰 추가
         String refreshToken = rq.getCookieValue("refreshToken", null);
 
-        if (accessToken  == null) {
+        if (accessToken == null) {
             String authorization = req.getHeader("Authorization");
             if (authorization != null) {
 //                accessToken = authorization.substring("bearer ".length());

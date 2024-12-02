@@ -1,26 +1,36 @@
-show databases;
+show
+databases;
 
-drop database if exists surl_dev;
-create database surl_dev;
-use surl_dev;
+drop
+database if exists surl_dev;
+create
+database surl_dev;
+use
+surl_dev;
 
-show tables;
+show
+tables;
 desc article;
 
-select * from article;
-select * from member;
+select *
+from article;
+select *
+from member;
 
 TRUNCATE TABLE article;
 TRUNCATE TABLE `member`;
 
 --##### postgre
 
-drop database surl_dev;
-create database surl_dev;
+drop
+database surl_dev;
+create
+database surl_dev;
 -- use 대신 edit connection에서 사용중인 db명을 바꿔줘야 함
 
 -- show databases;
-select datname from pg_database
+select datname
+from pg_database
 
 -- 현재 선택된 데이터베이스안의 모든 사용자 정의 테이블 목록 나열
 SELECT tablename
@@ -29,18 +39,17 @@ WHERE schemaname != 'pg_catalog'
 AND schemaname != 'information_schema';
 
 --post 테이블 생성
-create table post (
-                      id bigserial not null,
-                      primary key (id),
-                      create_date timestamp(6),
-                      modify_date timestamp(6),
-                      title varchar(255)
+create table post
+(
+    id          bigserial not null,
+    primary key (id),
+    create_date timestamp(6),
+    modify_date timestamp(6),
+    title       varchar(255)
 )
-
-
---post 테이블에 데이터 삽입
+    --post 테이블에 데이터 삽입
 --# V1
-insert into post
+    insert into post
 (id, create_date, modify_date, title)
 values
 (default, NOW(), NOW(), '제목 1')
@@ -58,8 +67,8 @@ values
 select P.*
 from post AS P
 where upper(P.title) like upper('%당근%') escape '\'
-order by P.id desc
-    limit 10 offset 0;
+order by P.id desc limit 10
+offset 0;
 
 --카운트 쿼리
 select count(P.id)
@@ -72,8 +81,8 @@ where upper(P.title) like upper('%당근%') escape '\'
 select P.*
 from post AS P
 where upper(P.title) like upper('%당근%') escape '\'
-order by P.id desc
-    limit 10 offset 10;
+order by P.id desc limit 10
+offset 10;
 --카운트 쿼리
 select count(P.id)
 from post AS P

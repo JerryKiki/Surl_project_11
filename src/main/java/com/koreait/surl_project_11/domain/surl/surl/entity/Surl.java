@@ -20,7 +20,7 @@ public class Surl extends BaseTime {
     @ManyToOne
     @JsonIgnore
     private Member author;
-    
+
     private String body;
     private String url;
 

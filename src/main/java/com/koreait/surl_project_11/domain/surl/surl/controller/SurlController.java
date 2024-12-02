@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "SurlController", description = "Surl 컨트롤러")
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class SurlController {
 
     private final Rq rq;
@@ -75,7 +75,7 @@ public class SurlController {
     @Operation(summary = "원본 URL로 리다이렉트")
     public String go(
             @PathVariable long id
-    ){
+    ) {
         Surl surl = surlService.findById(id).orElseThrow(GlobalException.E404::new);
 
         surlService.increaseCount(surl);

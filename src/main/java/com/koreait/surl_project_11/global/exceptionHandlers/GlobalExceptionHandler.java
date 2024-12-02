@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
 //        log.debug("handleException 1");
 //        return ex.getMessage();
 //    }
-    
+
     //아래는 명시적으로 처리하지 않은 넓은 범위의 Exception을 처리하기 위한 코드
     //기타이기 때문에 원래 모양대로 내버려둔다 ==> 상정한 exception이 아니면 print trace(예외 발생에 대한 자세한 경위)를 보는게 좋으니깐.
     private Rq rq;
@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
         data.put("path", path);
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    
+
     @ExceptionHandler(GlobalException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) //이걸 넣어주면 postman 테스트에서 결과창에 상단에 뜨는 result 자체를 400으로 바꿀 수 있다
     @ResponseBody

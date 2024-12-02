@@ -23,7 +23,7 @@ import static lombok.AccessLevel.PROTECTED;
 //BaseTime이 BaseEntity를 상속받기 때문에 BaseTime만 해줘도 된다 (여기에 BaseEntity 것도 다 있으니깐)
 public class Article extends BaseTime {
 
-//    @Id //이 필드를 PRIMARY KEY로 만들거야
+    //    @Id //이 필드를 PRIMARY KEY로 만들거야
 //    @GeneratedValue(strategy = IDENTITY) //프라이머리키 값을 자동으로 생성할 때 사용 (==AUTO_INCREMENT)
 //    private long id;
 //    @CreatedDate
@@ -36,6 +36,7 @@ public class Article extends BaseTime {
     //기존에 쓰던 방식
     //private Long memberId;
     //private String username;
-    @ManyToOne //Article 입장에서는 다른 entity에서 온 것이라서 ManyToOne을 달아줌 (이때 Many가 Aritlce, One이 Member : 하나의 회원이 여러개의 글을 쓸 수 있다)
+    @ManyToOne
+    //Article 입장에서는 다른 entity에서 온 것이라서 ManyToOne을 달아줌 (이때 Many가 Aritlce, One이 Member : 하나의 회원이 여러개의 글을 쓸 수 있다)
     private Member author; //jpa에서는 이렇게 하는게 관례
 }
